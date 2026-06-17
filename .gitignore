@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Streamlit 個人設定（メール等。リポジトリには含めない）
+.streamlit/secrets.toml
+.streamlit/credentials.toml
+
+# 一時ファイル
+_t.txt
+_tickertest.txt
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
