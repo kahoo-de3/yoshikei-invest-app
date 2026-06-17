@@ -37,9 +37,9 @@ pio.templates["light_chart"] = go.layout.Template(
     layout=dict(
         paper_bgcolor="#f7f5ee",
         plot_bgcolor="#ffffff",
-        font=dict(color="#222222"),
-        title=dict(font=dict(color="#333333")),
-        legend=dict(font=dict(color="#333333")),
+        font=dict(color="#222222", family="'Noto Sans JP', sans-serif"),
+        title=dict(font=dict(color="#333333", family="'Noto Sans JP', sans-serif")),
+        legend=dict(font=dict(color="#333333", family="'Noto Sans JP', sans-serif")),
         xaxis=dict(
             gridcolor="#e4e1d7", linecolor="#c9c4b5", zerolinecolor="#e4e1d7",
             ticks="outside", tickcolor="#c9c4b5", showgrid=True,
@@ -76,6 +76,15 @@ def inject_theme():
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+
+        /* フォント統一: Streamlit UI 全体 */
+        html, body, [class*="css"], .stApp, .stMarkdown, .stDataFrame,
+        div[data-testid="stMetricValue"], div[data-testid="stMetricLabel"],
+        button, input, select, textarea {
+            font-family: 'Noto Sans JP', sans-serif !important;
+        }
+
         /* 全体の背景: 灰色 + ほのかな金色グロー */
         .stApp {
             background:
