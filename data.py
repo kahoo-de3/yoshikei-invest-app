@@ -248,14 +248,112 @@ SECTOR_JP = {
 }
 
 
+# 静的フォールバック（API失敗時のバックアップ）2026年6月時点の概算値
+_STATIC_FUND_DATA: dict[str, dict] = {
+    "SPY": {
+        "holdings_list": [
+            ("MSFT", "Microsoft Corp", 0.0699),
+            ("AAPL", "Apple Inc", 0.0645),
+            ("NVDA", "NVIDIA Corp", 0.0620),
+            ("AMZN", "Amazon.com Inc", 0.0380),
+            ("META", "Meta Platforms Inc", 0.0280),
+            ("GOOGL", "Alphabet Inc A", 0.0210),
+            ("GOOG", "Alphabet Inc C", 0.0180),
+            ("BRK.B", "Berkshire Hathaway B", 0.0170),
+            ("LLY", "Eli Lilly and Co", 0.0150),
+            ("AVGO", "Broadcom Inc", 0.0145),
+        ],
+        "sectors": {
+            "technology": 0.325, "financial_services": 0.130,
+            "healthcare": 0.115, "consumer_cyclical": 0.110,
+            "communication_services": 0.085, "industrials": 0.085,
+            "consumer_defensive": 0.060, "energy": 0.035,
+            "utilities": 0.025, "realestate": 0.020, "basic_materials": 0.020,
+        },
+    },
+    "QQQ": {
+        "holdings_list": [
+            ("MSFT", "Microsoft Corp", 0.0864),
+            ("AAPL", "Apple Inc", 0.0785),
+            ("NVDA", "NVIDIA Corp", 0.0780),
+            ("AMZN", "Amazon.com Inc", 0.0492),
+            ("META", "Meta Platforms Inc", 0.0456),
+            ("GOOGL", "Alphabet Inc A", 0.0264),
+            ("GOOG", "Alphabet Inc C", 0.0258),
+            ("TSLA", "Tesla Inc", 0.0248),
+            ("AVGO", "Broadcom Inc", 0.0240),
+            ("COST", "Costco Wholesale", 0.0185),
+        ],
+        "sectors": {
+            "technology": 0.520, "communication_services": 0.165,
+            "consumer_cyclical": 0.130, "healthcare": 0.065,
+            "consumer_defensive": 0.060, "industrials": 0.040,
+            "basic_materials": 0.010, "utilities": 0.010,
+        },
+    },
+    "SCHD": {
+        "holdings_list": [
+            ("MO",   "Altria Group Inc", 0.0455),
+            ("VZ",   "Verizon Communications", 0.0442),
+            ("EOG",  "EOG Resources Inc", 0.0421),
+            ("PKG",  "Packaging Corp of America", 0.0418),
+            ("LMT",  "Lockheed Martin Corp", 0.0415),
+            ("CVX",  "Chevron Corp", 0.0410),
+            ("PEP",  "PepsiCo Inc", 0.0405),
+            ("KO",   "Coca-Cola Co", 0.0403),
+            ("PFE",  "Pfizer Inc", 0.0398),
+            ("CSCO", "Cisco Systems Inc", 0.0393),
+        ],
+        "sectors": {
+            "financial_services": 0.175, "healthcare": 0.155,
+            "consumer_defensive": 0.130, "industrials": 0.125,
+            "energy": 0.115, "communication_services": 0.095,
+            "technology": 0.085, "basic_materials": 0.065, "utilities": 0.055,
+        },
+    },
+    "ACWI": {
+        "holdings_list": [
+            ("MSFT",  "Microsoft Corp", 0.0420),
+            ("AAPL",  "Apple Inc", 0.0385),
+            ("NVDA",  "NVIDIA Corp", 0.0375),
+            ("AMZN",  "Amazon.com Inc", 0.0230),
+            ("META",  "Meta Platforms Inc", 0.0170),
+            ("GOOGL", "Alphabet Inc A", 0.0127),
+            ("TSLA",  "Tesla Inc", 0.0120),
+            ("AVGO",  "Broadcom Inc", 0.0115),
+            ("GOOG",  "Alphabet Inc C", 0.0110),
+            ("JPM",   "JPMorgan Chase & Co", 0.0108),
+        ],
+        "sectors": {
+            "technology": 0.245, "financial_services": 0.165,
+            "healthcare": 0.115, "consumer_cyclical": 0.110,
+            "industrials": 0.105, "communication_services": 0.080,
+            "consumer_defensive": 0.065, "energy": 0.050,
+            "utilities": 0.030, "realestate": 0.025, "basic_materials": 0.025,
+        },
+    },
+}
+
+
+def _static_fund_profile(ticker: str) -> dict:
+    """静的フォールバックデータを DataFrame 形式に変換して返す。"""
+    sd = _STATIC_FUND_DATA.get(ticker)
+    if sd is None:
+        return {"holdings": None, "sectors": None, "is_static": True}
+    rows = sd["holdings_list"]
+    holdings_df = pd.DataFrame(rows, columns=["symbol", "holdingName", "holdingPercent"])
+    holdings_df = holdings_df.set_index("symbol")
+    return {"holdings": holdings_df, "sectors": sd["sectors"], "is_static": True}
+
+
 def fetch_fund_profile(ticker: str) -> dict:
     """ETF の組入上位銘柄とセクター構成比率を取得する。
 
-    戻り値: {"holdings": DataFrame|None, "sectors": dict|None}
-    holdings は index=銘柄シンボル, 列=Name/Holding Percent。
-    無料データソース(Yahoo)の制約で組入銘柄は上位約10件まで。
+    戻り値: {"holdings": DataFrame|None, "sectors": dict|None, "is_static": bool}
+    holdings は index=銘柄シンボル, 列=holdingName/holdingPercent。
+    API失敗時は静的フォールバックデータを返す（is_static=True）。
     """
-    result = {"holdings": None, "sectors": None}
+    result: dict = {"holdings": None, "sectors": None, "is_static": False}
     try:
         fd = yf.Ticker(ticker).funds_data
         th = fd.top_holdings
@@ -266,6 +364,16 @@ def fetch_fund_profile(ticker: str) -> dict:
             result["sectors"] = sw
     except Exception:
         pass
+
+    # API で取得できなかった場合は静的データで補完
+    if result["holdings"] is None or (
+        hasattr(result["holdings"], "empty") and result["holdings"].empty
+    ):
+        static = _static_fund_profile(ticker)
+        result["holdings"] = static["holdings"]
+        if result["sectors"] is None:
+            result["sectors"] = static.get("sectors")
+        result["is_static"] = True
     return result
 
 

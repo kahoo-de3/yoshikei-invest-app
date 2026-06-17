@@ -478,14 +478,29 @@ def render_fund_profile(name: str, ticker: str):
     with col_h:
         st.markdown("**組入 上位銘柄**")
         hold = prof.get("holdings")
-        if hold is None or hold.empty:
+        if hold is None or (hasattr(hold, "empty") and hold.empty):
             st.info("組入銘柄データを取得できませんでした。")
         else:
             tbl = hold.reset_index()
-            tbl.columns = ["シンボル", "銘柄名", "構成比"]
-            tbl["構成比"] = (tbl["構成比"] * 100).round(2).astype(str) + "%"
+            # 列名を正規化（APIバージョンによって列名が異なる場合に対応）
+            cols = tbl.columns.tolist()
+            rename_map = {}
+            for i, c in enumerate(cols):
+                cl = str(c).lower()
+                if i == 0 or "symbol" in cl or cl in ("index", "ticker"):
+                    rename_map[c] = "シンボル"
+                elif "name" in cl or "holding" in cl and "percent" not in cl:
+                    rename_map[c] = "銘柄名"
+                elif "percent" in cl or "weight" in cl or "value" in cl:
+                    rename_map[c] = "構成比"
+            tbl = tbl.rename(columns=rename_map)
+            if "構成比" in tbl.columns:
+                tbl["構成比"] = (tbl["構成比"] * 100).round(2).astype(str) + "%"
             st.dataframe(tbl, use_container_width=True, hide_index=True, height=400)
-            st.caption("※ 無料データソース（Yahoo）の制約で上位約10銘柄まで表示。")
+            if prof.get("is_static"):
+                st.caption("※ 参考値（2026年6月時点の概算）。最新構成比は各ETF公式サイトでご確認ください。")
+            else:
+                st.caption("※ 無料データソース（Yahoo）の制約で上位約10銘柄まで表示。")
 
     # セクター構成円グラフ
     with col_s:
