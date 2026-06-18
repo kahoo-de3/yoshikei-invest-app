@@ -28,18 +28,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
 
-# スマホ向け: ツールバーのズームボタンで拡大縮小（指の縦スクロールは維持）。
-# scrollZoom=False のままにしてチャート上をなぞってもページがスクロールするようにし、
-# 拡大縮小はツールバーの 🔍＋ / 🔍－ / ⌂(リセット) ボタンで行う。
-MOBILE_CONFIG = {
-    "displayModeBar": True,       # ツールバーを常時表示
-    "displaylogo": False,         # Plotly ロゴは隠す
-    "responsive": True,
-    "scrollZoom": False,          # 縦スクロール優先（なぞってズームしない）
-    "modeBarButtonsToRemove": [   # スマホで不要・誤操作しやすいボタンを除去
-        "select2d", "lasso2d", "toImage", "pan2d",
-    ],
-}
+# スマホ向け: チャートのツールバーを隠しレスポンシブ化（指スクロールを優先）
+MOBILE_CONFIG = {"displayModeBar": False, "responsive": True, "scrollZoom": False}
+
+# 各チャートの上に表示する操作説明（PC・スマホ共通）
+CHART_OP_HELP = (
+    "🖥 PC: ドラッグで範囲を囲んで拡大／ダブルクリックで戻る　"
+    "📱 スマホ: 2本指ピンチで拡大・縮小／ダブルタップで戻る　凡例タップで線の表示ON/OFF"
+)
 
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
@@ -376,6 +372,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
             legend=dict(orientation="h", y=1.02, x=0),
         )
         monthly_axis(fig)
+        st.caption(CHART_OP_HELP)
         st.plotly_chart(fig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 予測（翌日 + 区間 + 複数日 + 的中履歴） ---
@@ -424,6 +421,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
                 xaxis_title="何営業日先か（0=直近）", yaxis_title="予測終値（目安）",
                 legend=dict(orientation="h", y=1.1, x=0),
             )
+            st.caption(CHART_OP_HELP)
             st.plotly_chart(mfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
             st.caption("※ 日次ドリフトが継続すると仮定した単純投影。先になるほど不確実性（レンジ幅）は拡大します。")
 
@@ -440,6 +438,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
                 xaxis_title="日付", yaxis_title="終値",
                 legend=dict(orientation="h", y=1.12, x=0),
             )
+            st.caption(CHART_OP_HELP)
             st.plotly_chart(hb1, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
             hb2 = go.Figure()
@@ -451,6 +450,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
                 margin=dict(l=10, r=10, t=40, b=10),
                 xaxis_title="日付", yaxis=dict(range=[0, 100], title="方向的中率 (%)"),
             )
+            st.caption(CHART_OP_HELP)
             st.plotly_chart(hb2, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 特徴量重要度 ---
@@ -463,6 +463,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
             height=340, margin=dict(l=10, r=10, t=10, b=10),
             xaxis_title="重要度（予測への寄与の大きさ）", yaxis_title="指標",
         )
+        st.caption(CHART_OP_HELP)
         st.plotly_chart(ifig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 
@@ -559,6 +560,7 @@ def render_fund_profile(name: str, ticker: str):
                 height=400, margin=dict(l=10, r=10, t=10, b=10),
                 showlegend=True, legend=dict(orientation="v", x=1.0, y=0.5),
             )
+            st.caption(CHART_OP_HELP)
             st.plotly_chart(pie, use_container_width=True, key=f"pie_{ticker}", theme=None, config=MOBILE_CONFIG)
 
 
@@ -585,6 +587,7 @@ if "vix_close" in frame.columns:
             xaxis_title="期間（月）", yaxis_title="VIX 指数（恐怖指数）",
         )
         monthly_axis(vfig)
+        st.caption(CHART_OP_HELP)
         st.plotly_chart(vfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 # ---- 為替・金利チャート ----
@@ -605,6 +608,7 @@ with st.expander("💱 為替・米国10年債の推移を表示"):
             legend=dict(orientation="h", y=1.1, x=0),
         )
         monthly_axis(ffig)
+        fx_col.caption(CHART_OP_HELP)
         fx_col.plotly_chart(ffig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
     if "ust10y_close" in frame.columns:
         yfig = go.Figure()
@@ -618,6 +622,7 @@ with st.expander("💱 為替・米国10年債の推移を表示"):
             legend=dict(orientation="h", y=1.1, x=0),
         )
         monthly_axis(yfig)
+        yld_col.caption(CHART_OP_HELP)
         yld_col.plotly_chart(yfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 st.markdown("---")
@@ -684,6 +689,7 @@ def render_etf_panel(
         margin=dict(l=10, r=10, t=40, b=10),
         xaxis_title=f"{sort_col}（リターン）", yaxis=dict(title=label_col, autorange="reversed"),
     )
+    b1.caption(CHART_OP_HELP)
     b1.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
     b2.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
 
