@@ -439,8 +439,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
         return
 
     pc1, pc2, pc3 = st.columns(3)
-    arrow = {"上昇": "🟢 ▲", "下落": "🔴 ▼", "横ばい": "⚪ ―"}[pred.direction]
-    pc1.metric("予測方向", f"{arrow} {pred.direction}", f"{pred.pred_return * 100:+.2f}%")
+    pc1.metric("予測方向", pred.direction, f"{pred.pred_return * 100:+.2f}%")
     pc2.metric(
         "予測終値（目安）", f"{pred.pred_close:,.2f}",
         f"{pred.pred_return * 100:+.2f}%", help=f"直近終値 {pred.last_close:,.2f}",
