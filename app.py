@@ -261,7 +261,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.caption("⏳ 最下部まで読み込むのに数秒かかります。")
+st.caption("※ 最下部まで読み込むのに数秒かかります。")
 
 if frame.empty:
     st.error("市場データを取得できませんでした。ネットワーク接続を確認して再度更新してください。")
@@ -273,7 +273,7 @@ prev = frame.dropna(subset=["sp500_close"]).iloc[-2]
 sp_change = latest["sp500_close"] - prev["sp500_close"]
 sp_change_pct = sp_change / prev["sp500_close"] * 100
 
-st.caption("📌 各カードの下段の増減はいずれも **前日比（前営業日との差）** です。")
+st.caption("※ 各カードの下段の増減はいずれも **前日比（前営業日との差）** です。")
 
 # --- 主要4資産 ---
 c1, c2, c3, c4 = st.columns(4)
