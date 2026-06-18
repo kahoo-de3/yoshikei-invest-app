@@ -23,7 +23,7 @@ import model as model_mod
 import news as news_mod
 
 st.set_page_config(
-    page_title="インデックス投資情報 by よしけい",
+    page_title="インデックス投資参考ページ by よしけい",
     layout="wide", page_icon="🪙",
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
@@ -241,7 +241,7 @@ st.sidebar.caption(
 # ---- データロード ----
 raw, frame = load_data(period)
 
-st.title("📈 インデックス投資情報　by よしけい")
+st.title("📈 インデックス投資参考ページ　by よしけい")
 
 if frame.empty:
     st.error("市場データを取得できませんでした。ネットワーク接続を確認して再度更新してください。")
