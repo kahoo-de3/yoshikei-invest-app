@@ -249,9 +249,14 @@ raw, frame = load_data(period)
 
 st.markdown(
     """
-    <h1 style="margin-bottom:0.1em;">インデックス投資参考ページ</h1>
-    <div style="text-align:center; font-size:1.5rem; font-weight:700;
-                color:#E9C766; margin:0 0 0.3em 0;">by よしけい</div>
+    <div style="text-align:center; font-weight:700; color:#E9C766;
+                font-size:clamp(2rem, 7vw, 3rem); line-height:1.2; margin:0;">
+        インデックス投資参考ページ
+    </div>
+    <div style="text-align:center; font-weight:700; color:#E9C766;
+                font-size:clamp(1.2rem, 4vw, 1.7rem); margin:0.15em 0 0.3em 0;">
+        by よしけい
+    </div>
     """,
     unsafe_allow_html=True,
 )
