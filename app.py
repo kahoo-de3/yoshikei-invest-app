@@ -388,6 +388,62 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ---- VIX チャート ----
+if "vix_close" in frame.columns:
+    with st.expander("VIX 指数の推移を表示"):
+        st.caption(
+            "※ VIX指数（恐怖指数）は、S&P500の今後約30日間の予想変動率を示す指標です。"
+            "数値が高いほど投資家の不安が大きいことを意味し、相場の下落局面で急上昇します。"
+            "目安は20以下＝平常圏、20〜30＝やや警戒、30超＝強い警戒（パニック的な売り）。"
+        )
+        vfig = go.Figure()
+        vfig.add_trace(go.Scatter(x=frame.index, y=frame["vix_close"], name="VIX", line=dict(color="orange")))
+        vfig.add_hline(y=20, line_dash="dash", annotation_text="平常圏 20", line_color="gray")
+        vfig.add_hline(y=30, line_dash="dash", annotation_text="警戒圏 30", line_color="red")
+        vfig.update_layout(
+            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
+            height=320, margin=dict(l=10, r=10, t=10, b=40),
+            xaxis_title="期間（月）", yaxis_title="VIX 指数（恐怖指数）",
+        )
+        monthly_axis(vfig)
+        st.caption(CHART_OP_HELP)
+        st.plotly_chart(vfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
+
+# ---- 為替・金利チャート ----
+with st.expander("為替・米国10年債の推移を表示"):
+    fx_col, yld_col = st.columns(2)
+    if "usdjpy_close" in frame.columns or "dxy_close" in frame.columns:
+        ffig = go.Figure()
+        if "usdjpy_close" in frame.columns:
+            ffig.add_trace(go.Scatter(x=frame.index, y=frame["usdjpy_close"], name="USD/JPY"))
+        if "dxy_close" in frame.columns:
+            ffig.add_trace(go.Scatter(x=frame.index, y=frame["dxy_close"], name="DXY", yaxis="y2"))
+        ffig.update_layout(
+            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
+            title="為替", height=320, margin=dict(l=10, r=10, t=40, b=40),
+            xaxis_title="期間（月）",
+            yaxis=dict(title="USD/JPY（円）"),
+            yaxis2=dict(title="ドル指数（対主要通貨）", overlaying="y", side="right", showgrid=False),
+            legend=dict(orientation="h", y=1.1, x=0),
+        )
+        monthly_axis(ffig)
+        fx_col.caption(CHART_OP_HELP)
+        fx_col.plotly_chart(ffig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
+    if "ust10y_close" in frame.columns:
+        yfig = go.Figure()
+        yfig.add_trace(go.Scatter(x=frame.index, y=frame["ust10y_close"], name="10年", line=dict(color="crimson")))
+        if "ust3m_close" in frame.columns:
+            yfig.add_trace(go.Scatter(x=frame.index, y=frame["ust3m_close"], name="3ヶ月", line=dict(color="steelblue")))
+        yfig.update_layout(
+            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
+            title="米国10年債 利回り (%)", height=340, margin=dict(l=10, r=10, t=40, b=40),
+            xaxis_title="期間（月）", yaxis_title="利回り (%)",
+            legend=dict(orientation="h", y=1.1, x=0),
+        )
+        monthly_axis(yfig)
+        yld_col.caption(CHART_OP_HELP)
+        yld_col.plotly_chart(yfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
+
 st.markdown("---")
 
 # ---- 資産タブ（S&P500 / SCHD を並列に: チャート + 予測強化） ----
@@ -645,62 +701,6 @@ with ftab3:
     render_fund_profile("SCHD", data_mod.FUND_PROXIES["SCHD"])
 with ftab4:
     render_fund_profile("オルカン（全世界株式）", data_mod.FUND_PROXIES["オルカン"])
-
-# ---- VIX チャート ----
-if "vix_close" in frame.columns:
-    with st.expander("VIX 指数の推移を表示"):
-        st.caption(
-            "※ VIX指数（恐怖指数）は、S&P500の今後約30日間の予想変動率を示す指標です。"
-            "数値が高いほど投資家の不安が大きいことを意味し、相場の下落局面で急上昇します。"
-            "目安は20以下＝平常圏、20〜30＝やや警戒、30超＝強い警戒（パニック的な売り）。"
-        )
-        vfig = go.Figure()
-        vfig.add_trace(go.Scatter(x=frame.index, y=frame["vix_close"], name="VIX", line=dict(color="orange")))
-        vfig.add_hline(y=20, line_dash="dash", annotation_text="平常圏 20", line_color="gray")
-        vfig.add_hline(y=30, line_dash="dash", annotation_text="警戒圏 30", line_color="red")
-        vfig.update_layout(
-            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
-            height=320, margin=dict(l=10, r=10, t=10, b=40),
-            xaxis_title="期間（月）", yaxis_title="VIX 指数（恐怖指数）",
-        )
-        monthly_axis(vfig)
-        st.caption(CHART_OP_HELP)
-        st.plotly_chart(vfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
-
-# ---- 為替・金利チャート ----
-with st.expander("為替・米国10年債の推移を表示"):
-    fx_col, yld_col = st.columns(2)
-    if "usdjpy_close" in frame.columns or "dxy_close" in frame.columns:
-        ffig = go.Figure()
-        if "usdjpy_close" in frame.columns:
-            ffig.add_trace(go.Scatter(x=frame.index, y=frame["usdjpy_close"], name="USD/JPY"))
-        if "dxy_close" in frame.columns:
-            ffig.add_trace(go.Scatter(x=frame.index, y=frame["dxy_close"], name="DXY", yaxis="y2"))
-        ffig.update_layout(
-            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
-            title="為替", height=320, margin=dict(l=10, r=10, t=40, b=40),
-            xaxis_title="期間（月）",
-            yaxis=dict(title="USD/JPY（円）"),
-            yaxis2=dict(title="ドル指数（対主要通貨）", overlaying="y", side="right", showgrid=False),
-            legend=dict(orientation="h", y=1.1, x=0),
-        )
-        monthly_axis(ffig)
-        fx_col.caption(CHART_OP_HELP)
-        fx_col.plotly_chart(ffig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
-    if "ust10y_close" in frame.columns:
-        yfig = go.Figure()
-        yfig.add_trace(go.Scatter(x=frame.index, y=frame["ust10y_close"], name="10年", line=dict(color="crimson")))
-        if "ust3m_close" in frame.columns:
-            yfig.add_trace(go.Scatter(x=frame.index, y=frame["ust3m_close"], name="3ヶ月", line=dict(color="steelblue")))
-        yfig.update_layout(
-            template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
-            title="米国10年債 利回り (%)", height=340, margin=dict(l=10, r=10, t=40, b=40),
-            xaxis_title="期間（月）", yaxis_title="利回り (%)",
-            legend=dict(orientation="h", y=1.1, x=0),
-        )
-        monthly_axis(yfig)
-        yld_col.caption(CHART_OP_HELP)
-        yld_col.plotly_chart(yfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 st.markdown("---")
 
