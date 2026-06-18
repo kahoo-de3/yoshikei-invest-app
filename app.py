@@ -731,12 +731,22 @@ st.markdown("---")
 
 # ---- 経済ニュース ----
 st.subheader("🌍 世界の経済ニュース")
+st.caption("海外メディアの見出しを日本語に自動翻訳して表示しています（翻訳できない場合は原文の英語のまま）。")
 items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     for it in items:
-        st.markdown(f"- [{it['title']}]({it['link']})  \n  <small>{it['source']} ｜ {it['published']}</small>", unsafe_allow_html=True)
+        title = it.get("title_ja") or it["title"]
+        orig = it["title"]
+        # 翻訳されている場合は原文（英語）を小さく併記
+        sub = f"{it['source']} ｜ {it['published']}"
+        if it.get("title_ja") and it["title_ja"] != orig:
+            sub = f"{it['source']} ｜ {it['published']}<br>🔤 {orig}"
+        st.markdown(
+            f"- [{title}]({it['link']})  \n  <small>{sub}</small>",
+            unsafe_allow_html=True,
+        )
 
 st.markdown("---")
 st.caption(
