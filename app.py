@@ -774,8 +774,8 @@ def render_etf_panel(
         tbl_col, bar_col = st.columns([2, 3])
     else:
         bar_col, tbl_col = st.columns([3, 2])
-    bar_col.caption(CHART_OP_HELP)
     bar_col.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
+    bar_col.caption(CHART_OP_HELP)
     tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
 
 
