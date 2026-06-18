@@ -541,12 +541,18 @@ st.caption(
 def render_fund_profile(name: str, ticker: str):
     """1ファンドの組入上位銘柄テーブルとセクター構成円グラフを描画する。"""
     prof = load_fund_profile(ticker)
-    st.markdown(f"#### {name}（{ticker} ベース）")
+    st.markdown(
+        f"<h4 style='text-align:center;'>{name}（{ticker} ベース）</h4>",
+        unsafe_allow_html=True,
+    )
     col_h, col_s = st.columns([1, 1])
 
     # 組入上位銘柄
     with col_h:
-        st.markdown("**組入 上位銘柄**")
+        st.markdown(
+            "<div style='text-align:center; font-weight:700;'>組入 上位銘柄</div>",
+            unsafe_allow_html=True,
+        )
         hold = prof.get("holdings")
         if hold is None or (hasattr(hold, "empty") and hold.empty):
             st.info("組入銘柄データを取得できませんでした。")
@@ -574,7 +580,10 @@ def render_fund_profile(name: str, ticker: str):
 
     # セクター構成円グラフ
     with col_s:
-        st.markdown("**セクター構成比率**")
+        st.markdown(
+            "<div style='text-align:center; font-weight:700;'>セクター構成比率</div>",
+            unsafe_allow_html=True,
+        )
         sectors = prof.get("sectors")
         if not sectors:
             st.info("セクター構成データを取得できませんでした。")
