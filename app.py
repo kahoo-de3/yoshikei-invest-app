@@ -143,9 +143,12 @@ def inject_theme():
             width: 100% !important;
         }
 
-        /* 展開メニュー（expander）の見出しを中央揃え */
+        /* 展開メニュー（expander）の見出しを枠内中央揃え */
+        details[data-testid="stExpander"] summary {
+            justify-content: center !important;
+        }
         details[data-testid="stExpander"] summary p {
-            text-align: center;
+            text-align: center !important;
             width: 100%;
         }
 
