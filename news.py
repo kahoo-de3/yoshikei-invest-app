@@ -56,11 +56,40 @@ def _t_google(text: str) -> str:
         return ""
 
 
-def translate_to_ja(text: str) -> str:
-    """英語見出しを日本語へ翻訳。MyMemory→Google の順に試し、
+def _t_deepl(text: str, key: str) -> str:
+    """DeepL API（無料/有料）。キー末尾 :fx は無料版エンドポイントを使う。"""
+    if not key:
+        return ""
+    try:
+        host = "https://api-free.deepl.com" if key.endswith(":fx") else "https://api.deepl.com"
+        body = urllib.parse.urlencode(
+            {"text": text, "target_lang": "JA", "source_lang": "EN"}
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            f"{host}/v2/translate",
+            data=body,
+            headers={
+                "Authorization": f"DeepL-Auth-Key {key}",
+                "User-Agent": "Mozilla/5.0",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        return data["translations"][0]["text"]
+    except Exception:
+        return ""
+
+
+def translate_to_ja(text: str, deepl_key: str | None = None) -> str:
+    """英語見出しを日本語へ翻訳。DeepL→MyMemory→Google の順に試し、
     日本語が得られなければ原文をそのまま返す。"""
     if not text or _has_japanese(text):
         return text
+    if deepl_key:
+        out = _t_deepl(text, deepl_key)
+        if out and _has_japanese(out):
+            return out
     for fn in (_t_mymemory, _t_google):
         out = fn(text)
         if out and _has_japanese(out):
@@ -111,10 +140,11 @@ def _is_relevant(title: str) -> bool:
     return False
 
 
-def fetch_news(limit: int = 12) -> list[dict]:
+def fetch_news(limit: int = 12, deepl_key: str | None = None) -> list[dict]:
     """各フィードからヘッドラインを集約し、金利・株価関連だけ返す。
 
-    戻り値: [{"title", "link", "source", "published"}...]
+    deepl_key を渡すと英語見出しの日本語訳に DeepL を優先利用する。
+    戻り値: [{"title", "title_ja", "link", "source", "published"}...]
     """
     items: list[dict] = []
     feeds = {**FEEDS_JP, **FEEDS_US}
@@ -128,7 +158,7 @@ def fetch_news(limit: int = 12) -> list[dict]:
             if not _is_relevant(title):
                 continue
             # 英語見出し（日本語を含まない）は日本語訳を併記用に付与
-            title_ja = title if _has_japanese(title) else translate_to_ja(title)
+            title_ja = title if _has_japanese(title) else translate_to_ja(title, deepl_key)
             items.append(
                 {
                     "title": title or "(no title)",
