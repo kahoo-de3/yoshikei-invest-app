@@ -649,6 +649,11 @@ with ftab4:
 # ---- VIX チャート ----
 if "vix_close" in frame.columns:
     with st.expander("VIX 指数の推移を表示"):
+        st.caption(
+            "※ VIX指数（恐怖指数）は、S&P500の今後約30日間の予想変動率を示す指標です。"
+            "数値が高いほど投資家の不安が大きいことを意味し、相場の下落局面で急上昇します。"
+            "目安は20以下＝平常圏、20〜30＝やや警戒、30超＝強い警戒（パニック的な売り）。"
+        )
         vfig = go.Figure()
         vfig.add_trace(go.Scatter(x=frame.index, y=frame["vix_close"], name="VIX", line=dict(color="orange")))
         vfig.add_hline(y=20, line_dash="dash", annotation_text="平常圏 20", line_color="gray")
