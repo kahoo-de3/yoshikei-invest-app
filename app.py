@@ -719,7 +719,7 @@ def render_etf_panel(
     if heading_small:
         st.markdown(
             f"<div style='text-align:center; font-weight:700; color:#E9C766; "
-            f"font-size:1.2rem;'>{title}</div>",
+            f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{title}</div>",
             unsafe_allow_html=True,
         )
     else:
@@ -781,7 +781,7 @@ def render_etf_panel(
 
 # 主要指数
 render_etf_panel(
-    "主要株価指数",
+    "《主要株価指数》",
     data_mod.INDEX_ETFS, "指数",
     "前日比リターン（主要指数）", "idx_bar",
     heading_small=True,
