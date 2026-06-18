@@ -48,6 +48,15 @@ def section_title(text: str):
         unsafe_allow_html=True,
     )
 
+
+def card_note(col, text: str):
+    """メトリクスカードの直下に引用元の商品名を小さく常時表示する。"""
+    col.markdown(
+        f"<div style='text-align:center; font-size:0.66rem; color:#bdb7a8; "
+        f"margin-top:-8px; margin-bottom:6px;'>{text}</div>",
+        unsafe_allow_html=True,
+    )
+
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
 pio.templates["light_chart"] = go.layout.Template(
@@ -340,11 +349,13 @@ c1.metric(
     f"{sp_change:+,.2f} ({sp_change_pct:+.2f}%)",
     help="S&P 500 株価指数（米国大型株500社の時価総額加重平均）",
 )
+card_note(c1, "S&P 500 株価指数")
 if "fut_close" in frame.columns:
     fut_now = frame["fut_close"].dropna().iloc[-1]
     fut_prev = frame["fut_close"].dropna().iloc[-2]
     fut_pct = (fut_now - fut_prev) / fut_prev * 100
     c2.metric("S&P500 先物（ES=F）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f} ({fut_pct:+.2f}%)", help="S&P500 E-mini 先物（CME上場・ほぼ24時間取引）")
+    card_note(c2, "S&P500 E-mini 先物（CME）")
 if "fut_gap" in frame.columns:
     gap = frame["fut_gap"].dropna().iloc[-1] * 100
     c3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
@@ -353,6 +364,7 @@ if "nasdaq_close" in frame.columns:
     nq_chg = nq_s.iloc[-1] - nq_s.iloc[-2]
     nq_pct = nq_chg / nq_s.iloc[-2] * 100
     c4.metric("NASDAQ100（QQQ・米ドル）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)", help="Invesco QQQ Trust（NASDAQ100連動ETF・米ドル建て）")
+    card_note(c4, "Invesco QQQ Trust（ETF）")
 
 # --- 2段目: SCHD → オルカン → VIX ---
 d1, d2, d3, d4 = st.columns(4)
@@ -361,15 +373,18 @@ if "schd_close" in frame.columns:
     schd_chg = schd_s.iloc[-1] - schd_s.iloc[-2]
     schd_pct = schd_chg / schd_s.iloc[-2] * 100
     d1.metric("SCHD（米ドル）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)", help="Schwab 米国配当株式 ETF（高配当・連続増配銘柄・米ドル建て）")
+    card_note(d1, "Schwab 米国配当株式 ETF")
 if "acwi_jp_close" in frame.columns:
     acwi_s = frame["acwi_jp_close"].dropna()
     acwi_chg = acwi_s.iloc[-1] - acwi_s.iloc[-2]
     acwi_pct = acwi_chg / acwi_s.iloc[-2] * 100
     d2.metric("オルカン（ACWI・円換算）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)", help="iShares MSCI ACWI ETF（全世界株式・USD建てをドル円で円換算。eMAXIS Slim 全世界株式のプロキシ）")
+    card_note(d2, "iShares MSCI ACWI ETF（円換算）")
 if "vix_close" in frame.columns:
     vix_now = frame["vix_close"].dropna().iloc[-1]
     vix_prev = frame["vix_close"].dropna().iloc[-2]
     d3.metric("VIX 指数（^VIX）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse", help="CBOE ボラティリティ指数（恐怖指数・S&P500の予想変動率）")
+    card_note(d3, "CBOE ボラティリティ指数")
 
 # ---- 為替・金利メトリクス ----
 m1, m2, m3, m4 = st.columns(4)
