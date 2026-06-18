@@ -429,7 +429,8 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
 
     # --- 予測（翌日 + 区間 + 複数日 + 的中履歴） ---
     st.markdown(
-        f"<h4 style='text-align:center; color:#E9C766;'>{name}予測</h4>",
+        f"<div style='text-align:center; font-weight:700; color:#E9C766; "
+        f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{name}予測</div>",
         unsafe_allow_html=True,
     )
     pred = model_mod.predict_asset(frame, close_col, ret_col, name)
