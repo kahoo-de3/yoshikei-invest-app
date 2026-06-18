@@ -730,21 +730,15 @@ render_etf_panel(
 st.markdown("---")
 
 # ---- 経済ニュース ----
-st.subheader("🌍 世界の経済ニュース")
-st.caption("海外メディアの見出しを日本語に自動翻訳して表示しています（翻訳できない場合は原文の英語のまま）。")
+st.subheader("🌍 経済・国際ニュース")
+st.caption("NHK・Yahoo!ニュースの日本語フィードから経済・国際の見出しを表示しています。")
 items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     for it in items:
-        title = it.get("title_ja") or it["title"]
-        orig = it["title"]
-        # 翻訳されている場合は原文（英語）を小さく併記
-        sub = f"{it['source']} ｜ {it['published']}"
-        if it.get("title_ja") and it["title_ja"] != orig:
-            sub = f"{it['source']} ｜ {it['published']}<br>🔤 {orig}"
         st.markdown(
-            f"- [{title}]({it['link']})  \n  <small>{sub}</small>",
+            f"- [{it['title']}]({it['link']})  \n  <small>{it['source']} ｜ {it['published']}</small>",
             unsafe_allow_html=True,
         )
 
