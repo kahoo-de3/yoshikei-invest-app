@@ -28,8 +28,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
 
-# スマホ向け: チャートのツールバーを隠しレスポンシブ化（指スクロールを優先）
-MOBILE_CONFIG = {"displayModeBar": False, "responsive": True, "scrollZoom": False}
+# スマホ向け: ツールバーのズームボタンで拡大縮小（指の縦スクロールは維持）。
+# scrollZoom=False のままにしてチャート上をなぞってもページがスクロールするようにし、
+# 拡大縮小はツールバーの 🔍＋ / 🔍－ / ⌂(リセット) ボタンで行う。
+MOBILE_CONFIG = {
+    "displayModeBar": True,       # ツールバーを常時表示
+    "displaylogo": False,         # Plotly ロゴは隠す
+    "responsive": True,
+    "scrollZoom": False,          # 縦スクロール優先（なぞってズームしない）
+    "modeBarButtonsToRemove": [   # スマホで不要・誤操作しやすいボタンを除去
+        "select2d", "lasso2d", "toImage", "pan2d",
+    ],
+}
 
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
