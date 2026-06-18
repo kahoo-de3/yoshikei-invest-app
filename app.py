@@ -819,6 +819,7 @@ render_etf_panel(
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
     sort_col="期間騰落 %", show_bar=False, heading_small=True, subtitle="《参考資料》",
+    heading_size="1.8rem",
 )
 st.caption(
     "※ **S&P500 が不調なときに資金が向かいやすい先**（ディフェンシブ）。"
