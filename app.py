@@ -422,12 +422,12 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
     )
     pc3.metric("信頼度", pred.confidence, help="検証期間の方向的中率に基づく")
     st.caption(
-        f"📐 翌日の予測区間（約80%）: **{pred.pred_low:,.2f} 〜 {pred.pred_high:,.2f}**"
+        f"※ 翌日の予測区間（約80%）: **{pred.pred_low:,.2f} 〜 {pred.pred_high:,.2f}**"
     )
 
     if pred.direction_hit == pred.direction_hit:  # not NaN
         st.caption(
-            f"📊 アンサンブル検証: 方向的中率 **{pred.direction_hit * 100:.1f}%** / "
+            f"※ アンサンブル検証: 方向的中率 **{pred.direction_hit * 100:.1f}%** / "
             f"平均絶対誤差 **{pred.backtest_mae * 100:.2f}%**（学習 {pred.n_train} 営業日）。"
             f"的中率50%付近はコイン投げと同等で、予測の確実性は低いことを意味します。"
         )
