@@ -434,7 +434,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
 
     # --- 複数日先の予測 ---
     if pred.multiday:
-        with st.expander(f"📅 複数日先（{len(pred.multiday)}営業日）の見通しレンジ"):
+        with st.expander(f"複数日先（{len(pred.multiday)}営業日）の見通しレンジ"):
             days = [0] + [m["day"] for m in pred.multiday]
             mid = [pred.last_close] + [m["close"] for m in pred.multiday]
             low = [pred.last_close] + [m["low"] for m in pred.multiday]
@@ -458,7 +458,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
 
     # --- 的中履歴グラフ ---
     if pred.bt_dates:
-        with st.expander("📈 予測の的中履歴（バックテスト）"):
+        with st.expander("予測の的中履歴（バックテスト）"):
             hb1 = go.Figure()
             hb1.add_trace(go.Scatter(x=pred.bt_dates, y=pred.bt_actual_close, name="実際の終値", line=dict(color="#7FB8FF")))
             hb1.add_trace(go.Scatter(x=pred.bt_dates, y=pred.bt_pred_close, name="予測終値", line=dict(color="#E9C766", dash="dot")))
@@ -485,7 +485,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
             st.plotly_chart(hb2, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 特徴量重要度 ---
-    with st.expander("どの指標が予測に効いているか（特徴量重要度）"):
+    with st.expander("どの指標が予測に効いているか"):
         imp = pd.Series(pred.feature_importance).sort_values(ascending=True)
         imp.index = [FEAT_LABELS.get(i, i) for i in imp.index]
         ifig = go.Figure(go.Bar(x=imp.values, y=imp.index, orientation="h", marker_color="#D4AF37"))
