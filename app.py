@@ -129,6 +129,21 @@ def inject_theme():
         }
         div[data-testid="stMetricValue"] { color: #F2E2A8 !important; }
 
+        /* メトリクスカードの中身（ラベル・数値・前日比）を中央揃え */
+        div[data-testid="stMetric"] { text-align: center; }
+        div[data-testid="stMetricLabel"],
+        div[data-testid="stMetricValue"],
+        div[data-testid="stMetricDelta"] {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 展開メニュー（expander）の見出しを中央揃え */
+        details[data-testid="stExpander"] summary p {
+            text-align: center;
+            width: 100%;
+        }
+
         /* サイドバー */
         section[data-testid="stSidebar"] {
             background: linear-gradient(180deg, #42454a 0%, #393c41 100%);
