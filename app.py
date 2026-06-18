@@ -839,11 +839,16 @@ render_etf_panel(
     sort_col=PERIOD_COL, show_bar=False, heading_small=True, subtitle="《参考資料》",
     heading_size="1.8rem",
 )
-st.caption(
-    "※ **S&P500 が不調なときに資金が向かいやすい先**（ディフェンシブ）。"
-    "公益・生活必需品・ヘルスケア・エネルギーは SCHD の主要構成セクターとも重なります。"
-    f"「対S&P500(前日比)」がプラス＝S&P500（前日比 {sp_day_chg:+.2f}%）を上回っており、"
-    "「リスク回避（資金逃避）」が起きているサインの目安です。"
+st.markdown(
+    """
+    <div style="font-size:9pt; line-height:1.6; color:#d8d4c6;">
+    ※ <b>「対S&P500（前日比）」</b>は、その資産が前日比でS&P500より何％多く動いたか（相対パフォーマンス）を表します。<br>
+    ・<b>プラス（＋）</b>＝S&P500より強い＝資金がその資産に逃げている可能性（リスク回避＝リスクオフのサイン）<br>
+    ・<b>マイナス（−）</b>＝S&P500より弱い＝リスクオン（株が選好されている）<br>
+    S&P500が下がる局面で金・米国債・公益株などが「対S&P500プラス」になっていれば、投資家がこちらに資金を移している目安になります。
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.markdown("---")
