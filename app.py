@@ -926,3 +926,19 @@ st.caption(
     "投資判断はご自身の責任で行ってください。本アプリの利用により生じたいかなる損害についても"
     "制作者は責任を負いません。"
 )
+
+st.markdown("---")
+
+# ---- 無料 ChatGPT（外部サイト）----
+st.markdown(
+    "<div style='text-align:center; font-weight:700; color:#E9C766; "
+    "font-size:1.8rem; margin:0.3em 0;'>AIに相談する</div>"
+    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
+    "わからない用語や投資の疑問を無料のChatGPTに聞けます（別タブで開きます）</div>",
+    unsafe_allow_html=True,
+)
+st.link_button(
+    "無料ChatGPTを開く ▶",
+    "https://chatgpt.com/",
+    use_container_width=True,
+)
