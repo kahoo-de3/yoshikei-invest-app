@@ -605,7 +605,8 @@ def render_fund_profile(name: str, ticker: str):
     # セクター構成円グラフ
     with col_s:
         st.markdown(
-            "<div style='text-align:center; font-weight:700;'>セクター構成比率</div>",
+            "<div style='text-align:center; font-weight:700; color:#E9C766; "
+            "font-size:1.2rem;'>セクター構成比率</div>",
             unsafe_allow_html=True,
         )
         sectors = prof.get("sectors")
