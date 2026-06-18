@@ -660,7 +660,7 @@ if "vix_close" in frame.columns:
         st.plotly_chart(vfig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 # ---- 為替・金利チャート ----
-with st.expander("💱 為替・米国10年債の推移を表示"):
+with st.expander("為替・米国10年債の推移を表示"):
     fx_col, yld_col = st.columns(2)
     if "usdjpy_close" in frame.columns or "dxy_close" in frame.columns:
         ffig = go.Figure()
