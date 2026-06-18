@@ -298,7 +298,7 @@ st.markdown(
 st.markdown(
     "<div style='text-align:center; font-size:0.85rem; color:#FFA500;'>"
     "※ 最下部まで読み込むのに数秒かかります。<br>"
-    "キャラクター運動中はloading中です。</div>",
+    "キャラクターが動いているとloading中です。</div>",
     unsafe_allow_html=True,
 )
 
