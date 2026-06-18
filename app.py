@@ -323,7 +323,7 @@ except Exception:
     _data_date = pd.Timestamp(latest.name).strftime("%Y/%m/%d")
 st.markdown(
     "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
-    f"※ 下記カードは米国引け <b>{_data_date}</b> 時点のデータ。下段の増減はいずれも <b>前日比</b> です。<br>"
+    f"※ 下記カードは米国引け <b>{_data_date}</b> 時点のデータ。<br>"
     f"データ取得時刻：{fetched_at}（日本時間）</div>",
     unsafe_allow_html=True,
 )
