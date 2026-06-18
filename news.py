@@ -8,7 +8,64 @@
 """
 from __future__ import annotations
 
+import json
+import re
+import urllib.parse
+import urllib.request
+
 import feedparser
+
+# 日本語（ひらがな・カタカナ・漢字）が含まれるか判定する正規表現
+_JP_RE = re.compile(r"[぀-ヿ一-鿿]")
+
+
+def _has_japanese(text: str) -> bool:
+    return bool(_JP_RE.search(text or ""))
+
+
+def _t_mymemory(text: str) -> str:
+    """MyMemory 翻訳API（無料・キー不要）。失敗時は空文字。"""
+    try:
+        params = urllib.parse.urlencode({"q": text, "langpair": "en|ja"})
+        req = urllib.request.Request(
+            f"https://api.mymemory.translated.net/get?{params}",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        return data.get("responseData", {}).get("translatedText", "") or ""
+    except Exception:
+        return ""
+
+
+def _t_google(text: str) -> str:
+    """Google 翻訳の無料エンドポイント。クラウドでは弾かれることがある。"""
+    try:
+        params = urllib.parse.urlencode(
+            {"client": "gtx", "sl": "en", "tl": "ja", "dt": "t", "q": text}
+        )
+        req = urllib.request.Request(
+            f"https://translate.googleapis.com/translate_a/single?{params}",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        segments = data[0] or []
+        return "".join(seg[0] for seg in segments if seg and seg[0])
+    except Exception:
+        return ""
+
+
+def translate_to_ja(text: str) -> str:
+    """英語見出しを日本語へ翻訳。MyMemory→Google の順に試し、
+    日本語が得られなければ原文をそのまま返す。"""
+    if not text or _has_japanese(text):
+        return text
+    for fn in (_t_mymemory, _t_google):
+        out = fn(text)
+        if out and _has_japanese(out):
+            return out
+    return text
 
 # 日本語の経済・国際ニュース RSS フィード
 FEEDS_JP = {
@@ -70,9 +127,12 @@ def fetch_news(limit: int = 12) -> list[dict]:
             title = entry.get("title", "")
             if not _is_relevant(title):
                 continue
+            # 英語見出し（日本語を含まない）は日本語訳を併記用に付与
+            title_ja = title if _has_japanese(title) else translate_to_ja(title)
             items.append(
                 {
                     "title": title or "(no title)",
+                    "title_ja": title_ja or title,
                     "link": entry.get("link", ""),
                     "source": source,
                     "published": entry.get("published", ""),

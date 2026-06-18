@@ -740,8 +740,14 @@ if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     for it in items:
+        ja = it.get("title_ja") or it["title"]
+        orig = it["title"]
+        # 翻訳された（原文と異なる）英語ニュースは原文も小さく併記
+        sub = f"{it['source']} ｜ {it['published']}"
+        if ja != orig:
+            sub = f"{it['source']} ｜ {it['published']}<br>🔤 {orig}"
         st.markdown(
-            f"- [{it['title']}]({it['link']})  \n  <small>{it['source']} ｜ {it['published']}</small>",
+            f"- [{ja}]({it['link']})  \n  <small>{sub}</small>",
             unsafe_allow_html=True,
         )
 
