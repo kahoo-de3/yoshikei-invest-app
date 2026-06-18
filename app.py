@@ -312,9 +312,10 @@ prev = frame.dropna(subset=["sp500_close"]).iloc[-2]
 sp_change = latest["sp500_close"] - prev["sp500_close"]
 sp_change_pct = sp_change / prev["sp500_close"] * 100
 
+_data_date = latest.name.strftime("%Y/%m/%d") if hasattr(latest.name, "strftime") else str(latest.name)
 st.markdown(
     "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
-    "※ 各カードの下段の増減はいずれも <b>前日比</b> です。</div>",
+    f"※ 下記カードは <b>{_data_date}</b> 時点のデータ。下段の増減はいずれも <b>前日比</b> です。</div>",
     unsafe_allow_html=True,
 )
 
