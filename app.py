@@ -247,7 +247,14 @@ st.sidebar.caption(
 # ---- データロード ----
 raw, frame = load_data(period)
 
-st.title("📈 インデックス投資参考ページ　by よしけい")
+st.markdown(
+    """
+    <h1 style="margin-bottom:0.1em;">インデックス投資参考ページ</h1>
+    <div style="text-align:center; font-size:1.5rem; font-weight:700;
+                color:#E9C766; margin:0 0 0.3em 0;">by よしけい</div>
+    """,
+    unsafe_allow_html=True,
+)
 st.caption("⏳ 最下部まで読み込むのに数秒かかります。")
 
 if frame.empty:
