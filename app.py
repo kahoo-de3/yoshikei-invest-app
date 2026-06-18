@@ -130,12 +130,17 @@ def inject_theme():
         div[data-testid="stMetricValue"] { color: #F2E2A8 !important; }
 
         /* メトリクスカードの中身（ラベル・数値・前日比）を中央揃え */
-        div[data-testid="stMetric"] { text-align: center; }
+        div[data-testid="stMetric"] { text-align: center !important; }
+        div[data-testid="stMetric"] label,
         div[data-testid="stMetricLabel"],
+        div[data-testid="stMetricLabel"] > div,
         div[data-testid="stMetricValue"],
+        div[data-testid="stMetricValue"] > div,
         div[data-testid="stMetricDelta"] {
-            display: flex;
-            justify-content: center;
+            display: flex !important;
+            justify-content: center !important;
+            text-align: center !important;
+            width: 100% !important;
         }
 
         /* 展開メニュー（expander）の見出しを中央揃え */
