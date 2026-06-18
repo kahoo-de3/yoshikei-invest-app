@@ -795,18 +795,18 @@ st.markdown("---")
 # ディフェンシブ／資金逃避先（S&P500 との相対パフォーマンス付き）
 sp_series = frame["sp500_close"].dropna()
 sp_day_chg = (sp_series.iloc[-1] / sp_series.iloc[-2] - 1) * 100
-st.caption(
-    "※ **S&P500 が不調なときに資金が向かいやすい先**（ディフェンシブ）。"
-    "公益・生活必需品・ヘルスケア・エネルギーは SCHD の主要構成セクターとも重なります。"
-    f"「対S&P500(前日比)」がプラス＝S&P500（前日比 {sp_day_chg:+.2f}%）を上回っており、"
-    "「リスク回避（資金逃避）」が起きているサインの目安です。"
-)
 render_etf_panel(
     "ディフェンシブ / 資金逃避先",
     data_mod.DEFENSIVE_ETFS, "資産",
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
     sort_col="期間騰落 %", show_bar=False, heading_small=True,
+)
+st.caption(
+    "※ **S&P500 が不調なときに資金が向かいやすい先**（ディフェンシブ）。"
+    "公益・生活必需品・ヘルスケア・エネルギーは SCHD の主要構成セクターとも重なります。"
+    f"「対S&P500(前日比)」がプラス＝S&P500（前日比 {sp_day_chg:+.2f}%）を上回っており、"
+    "「リスク回避（資金逃避）」が起きているサインの目安です。"
 )
 
 st.markdown("---")
