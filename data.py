@@ -6,6 +6,7 @@ APIキーは不要。取得結果はキャッシュして無駄な再取得を�
 from __future__ import annotations
 
 import datetime as dt
+import time
 
 import pandas as pd
 import yfinance as yf
@@ -63,17 +64,34 @@ DEFENSIVE_ETFS = {
 }
 
 
-def _download(ticker: str, period: str = "3y", interval: str = "1d") -> pd.DataFrame:
-    """単一ティッカーの OHLCV を取得して整形する。"""
-    df = yf.download(
-        ticker,
-        period=period,
-        interval=interval,
-        auto_adjust=True,
-        progress=False,
-    )
-    if df.empty:
-        return df
+def _download(
+    ticker: str, period: str = "3y", interval: str = "1d", retries: int = 3
+) -> pd.DataFrame:
+    """単一ティッカーの OHLCV を取得して整形する。
+
+    クラウド環境では Yahoo が一時的にレート制限することがあるため、
+    空データ／例外時は短い待機を挟んで数回リトライする。
+    """
+    df = pd.DataFrame()
+    for attempt in range(retries):
+        try:
+            df = yf.download(
+                ticker,
+                period=period,
+                interval=interval,
+                auto_adjust=True,
+                progress=False,
+            )
+        except Exception:
+            df = pd.DataFrame()
+        if df is not None and not df.empty:
+            break
+        # レート制限の緩和を待って再試行（0.8s, 1.6s, ...）
+        if attempt < retries - 1:
+            time.sleep(0.8 * (attempt + 1))
+
+    if df is None or df.empty:
+        return pd.DataFrame()
     # yfinance が MultiIndex 列を返す場合があるのでフラット化
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
