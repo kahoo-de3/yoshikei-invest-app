@@ -262,13 +262,16 @@ def load_news(version: str = _NEWS_VER):
 
 
 # ---- サイドバー ----
+PERIOD_JP = {"6mo": "6ヶ月", "1y": "1年", "3y": "3年", "5y": "5年", "max": "全期間"}
 st.sidebar.title("⚙️ 設定")
 period = st.sidebar.selectbox(
     "表示期間",
     options=["6mo", "1y", "3y", "5y", "max"],
     index=2,
-    format_func=lambda x: {"6mo": "6ヶ月", "1y": "1年", "3y": "3年", "5y": "5年", "max": "全期間"}[x],
+    format_func=lambda x: PERIOD_JP[x],
 )
+# 表示期間に応じた騰落列名（例: 3年騰落 %）
+PERIOD_COL = f"{PERIOD_JP[period]}騰落 %"
 if st.sidebar.button("🔄 データを今すぐ更新"):
     st.cache_data.clear()
     st.rerun()
@@ -771,7 +774,7 @@ def render_etf_panel(
         row = {
             label_col: f"{name_map.get(ticker, ticker)} ({ticker})",
             "前日比 %": day_chg,
-            "期間騰落 %": period_chg,
+            PERIOD_COL: period_chg,
         }
         if baseline_day is not None:
             row[rel_d_col] = day_chg - baseline_day
@@ -780,7 +783,7 @@ def render_etf_panel(
         rows.append(row)
     df = pd.DataFrame(rows).sort_values(sort_col, ascending=False)
 
-    fmt = {"前日比 %": "{:+.2f}", "期間騰落 %": "{:+.2f}"}
+    fmt = {"前日比 %": "{:+.2f}", PERIOD_COL: "{:+.2f}"}
     if baseline_day is not None:
         fmt[rel_d_col] = "{:+.2f}"
     if baseline_period is not None:
@@ -831,7 +834,7 @@ render_etf_panel(
     data_mod.DEFENSIVE_ETFS, "資産",
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
-    sort_col="期間騰落 %", show_bar=False, heading_small=True, subtitle="《参考資料》",
+    sort_col=PERIOD_COL, show_bar=False, heading_small=True, subtitle="《参考資料》",
     heading_size="1.8rem",
 )
 st.caption(
