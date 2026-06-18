@@ -676,12 +676,12 @@ def render_fund_profile(name: str, ticker: str):
     with col_s:
         st.markdown(
             "<div style='text-align:center; font-weight:700; color:#E9C766; "
-            "font-size:1.2rem;'>セクター構成比率</div>",
+            "font-size:1.2rem;'>業種構成比率</div>",
             unsafe_allow_html=True,
         )
         sectors = prof.get("sectors")
         if not sectors:
-            st.info("セクター構成データを取得できませんでした。")
+            st.info("業種構成データを取得できませんでした。")
         else:
             items = [(data_mod.SECTOR_JP.get(k, k), v) for k, v in sectors.items() if v and v > 0]
             items.sort(key=lambda x: x[1], reverse=True)
