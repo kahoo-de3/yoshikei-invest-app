@@ -37,6 +37,15 @@ CHART_OP_HELP = (
     "※ スマホ: 2本指ピンチで拡大・縮小／ダブルタップで戻る"
 )
 
+
+def section_title(text: str):
+    """金文字の共通セクション見出し（中央揃え・「セクター構成比率」と同サイズ）。"""
+    st.markdown(
+        f"<div style='text-align:center; font-weight:700; color:#E9C766; "
+        f"font-size:1.2rem; margin:0.3em 0;'>{text}</div>",
+        unsafe_allow_html=True,
+    )
+
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
 pio.templates["light_chart"] = go.layout.Template(
@@ -399,11 +408,7 @@ FEAT_LABELS = {
 def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
     """1資産分のローソク足チャートと予測（強化版）を描画する。"""
     # --- 価格チャート ---
-    st.markdown(
-        f"<div style='text-align:center; font-weight:700; color:#E9C766; "
-        f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{name} 推移</div>",
-        unsafe_allow_html=True,
-    )
+    section_title(f"{name} 推移")
     ohlc = raw.get(asset_key)
     if ohlc is None or ohlc.empty:
         st.info(f"{name} の価格データを取得できませんでした。")
@@ -431,11 +436,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
         st.plotly_chart(fig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 予測（翌日 + 区間 + 複数日 + 的中履歴） ---
-    st.markdown(
-        f"<div style='text-align:center; font-weight:700; color:#E9C766; "
-        f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{name}予測</div>",
-        unsafe_allow_html=True,
-    )
+    section_title(f"{name}予測")
     pred = model_mod.predict_asset(frame, close_col, ret_col, name)
     if pred is None:
         st.info("予測に十分なデータがありません。表示期間を長くして再度お試しください。")
@@ -554,11 +555,7 @@ with tab_acwi:
 st.markdown("---")
 
 # ---- 組み入れ銘柄（組入銘柄・セクター構成） ----
-st.markdown(
-    "<div style='text-align:center; font-weight:700; color:#E9C766; "
-    "font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>《組み入れ銘柄》</div>",
-    unsafe_allow_html=True,
-)
+section_title("組み入れ銘柄")
 st.caption(
     "それぞれのファンドが「どんな会社」に「どの業種に」どれくらい投資しているかの内訳です。"
     "S&P500は米国大型株、SCHDは米国の高配当・割安株、オルカンは全世界の株式に分散投資します。"
@@ -717,11 +714,7 @@ def render_etf_panel(
     heading_small=True で見出しを「セクター構成比率」と同じ小さめ金文字にする。
     """
     if heading_small:
-        st.markdown(
-            f"<div style='text-align:center; font-weight:700; color:#E9C766; "
-            f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{title}</div>",
-            unsafe_allow_html=True,
-        )
+        section_title(title)
     else:
         st.subheader(title)
     closes = load_group(tuple(name_map.keys()), period)
@@ -781,7 +774,7 @@ def render_etf_panel(
 
 # 主要指数
 render_etf_panel(
-    "《主要株価指数》",
+    "主要株価指数",
     data_mod.INDEX_ETFS, "指数",
     "前日比リターン（主要指数）", "idx_bar",
     heading_small=True,
@@ -790,7 +783,7 @@ st.markdown("---")
 
 # セクター別 ETF
 render_etf_panel(
-    "《セクター別 ETF パフォーマンス》",
+    "セクター別 ETF パフォーマンス",
     data_mod.SECTOR_ETFS, "セクター",
     "前日比リターン（セクター別）", "sector_bar",
     heading_small=True,
@@ -807,17 +800,17 @@ st.caption(
     "「リスク回避（資金逃避）」が起きているサインの目安です。"
 )
 render_etf_panel(
-    "🛡️ ディフェンシブ / 資金逃避先",
+    "ディフェンシブ / 資金逃避先",
     data_mod.DEFENSIVE_ETFS, "資産",
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
-    sort_col="期間騰落 %", show_bar=False,
+    sort_col="期間騰落 %", show_bar=False, heading_small=True,
 )
 
 st.markdown("---")
 
 # ---- 経済ニュース ----
-st.subheader("🌍 経済・国際ニュース（金利・株価）")
+section_title("経済・国際ニュース（金利・株価）")
 st.caption(
     "金利・株価に関する見出しに絞って表示しています。"
     "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語＋日本語訳を併記）から取得。"
