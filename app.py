@@ -515,7 +515,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
             st.plotly_chart(hb2, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 特徴量重要度 ---
-    with st.expander("どの指標が予測に効いているか"):
+    with st.expander("どの指標の予測ウエイトが高いか"):
         imp = pd.Series(pred.feature_importance).sort_values(ascending=True)
         imp.index = [FEAT_LABELS.get(i, i) for i in imp.index]
         ifig = go.Figure(go.Bar(x=imp.values, y=imp.index, orientation="h", marker_color="#D4AF37"))
