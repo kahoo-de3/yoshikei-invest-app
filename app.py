@@ -296,8 +296,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.markdown(
-    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
-    "※ 最下部まで読み込むのに数秒かかります。</div>",
+    "<div style='text-align:center; font-size:0.85rem; color:#FFA500;'>"
+    "※ 最下部まで読み込むのに数秒かかります。<br>"
+    "キャラクター運動中はloading中です。</div>",
     unsafe_allow_html=True,
 )
 
