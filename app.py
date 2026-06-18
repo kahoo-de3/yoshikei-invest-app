@@ -261,7 +261,11 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.caption("※ 最下部まで読み込むのに数秒かかります。")
+st.markdown(
+    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
+    "※ 最下部まで読み込むのに数秒かかります。</div>",
+    unsafe_allow_html=True,
+)
 
 if frame.empty:
     st.error("市場データを取得できませんでした。ネットワーク接続を確認して再度更新してください。")
@@ -273,7 +277,11 @@ prev = frame.dropna(subset=["sp500_close"]).iloc[-2]
 sp_change = latest["sp500_close"] - prev["sp500_close"]
 sp_change_pct = sp_change / prev["sp500_close"] * 100
 
-st.caption("※ 各カードの下段の増減はいずれも **前日比** です。")
+st.markdown(
+    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
+    "※ 各カードの下段の増減はいずれも <b>前日比</b> です。</div>",
+    unsafe_allow_html=True,
+)
 
 # --- 主要4資産 ---
 c1, c2, c3, c4 = st.columns(4)
