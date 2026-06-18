@@ -114,8 +114,8 @@ def inject_theme():
             filter: drop-shadow(0 0 10px rgba(212,175,55,0.42));
         }
 
-        /* 見出しをゴールドに */
-        h1, h2, h3 { color: #E9C766 !important; letter-spacing: .02em; }
+        /* 見出しをゴールドに・中央揃え */
+        h1, h2, h3 { color: #E9C766 !important; letter-spacing: .02em; text-align: center; }
 
         /* メトリクスカードを金縁のガラス風に */
         div[data-testid="stMetric"] {
