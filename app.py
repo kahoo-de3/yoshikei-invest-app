@@ -815,7 +815,7 @@ def render_etf_panel(
     bar_col.caption(CHART_OP_HELP)
     tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
     if period_note:
-        tbl_col.caption("※ 騰落期間を変更するには左上の >> から期間を変更してください")
+        tbl_col.caption("※ 騰落期間（6mo/1y/3y/5y）を変更するには左上の >> から期間を変更してください")
 
 
 # セクター別 ETF
