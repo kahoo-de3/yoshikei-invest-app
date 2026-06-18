@@ -790,9 +790,10 @@ st.markdown("---")
 
 # セクター別 ETF
 render_etf_panel(
-    "🏭 セクター別 ETF パフォーマンス",
+    "《セクター別 ETF パフォーマンス》",
     data_mod.SECTOR_ETFS, "セクター",
     "前日比リターン（セクター別）", "sector_bar",
+    heading_small=True,
 )
 st.markdown("---")
 
