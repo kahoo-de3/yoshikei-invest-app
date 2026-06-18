@@ -23,7 +23,7 @@ import model as model_mod
 import news as news_mod
 
 st.set_page_config(
-    page_title="インデックス投資参考ページ by よしけい",
+    page_title="index投資参考ページ by よしけい",
     layout="wide", page_icon="🪙",
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
@@ -286,7 +286,7 @@ st.markdown(
     <div style="text-align:center; font-weight:700; color:#E9C766;
                 font-size:clamp(1.3rem, 5vw, 2.3rem); line-height:1.2; margin:0;
                 white-space:nowrap;">
-        インデックス投資参考ページ
+        index投資参考ページ
     </div>
     <div style="text-align:center; font-weight:700; color:#E9C766;
                 font-size:clamp(1.2rem, 4vw, 1.7rem); margin:0.15em 0 0.3em 0;">
@@ -614,7 +614,7 @@ with tab_acwi:
 st.markdown("---")
 
 # ---- 組み入れ銘柄（組入銘柄・セクター構成） ----
-section_title("インデックス組み入れ銘柄")
+section_title("index組み入れ銘柄")
 st.caption(
     "それぞれのファンドが「どんな会社」に「どの業種に」どれくらい投資しているかの内訳です。"
     "S&P500は米国大型株、SCHDは米国の高配当・割安株、オルカンは全世界の株式に分散投資します。"
