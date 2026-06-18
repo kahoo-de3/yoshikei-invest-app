@@ -248,6 +248,7 @@ st.sidebar.caption(
 raw, frame = load_data(period)
 
 st.title("📈 インデックス投資参考ページ　by よしけい")
+st.caption("⏳ 最下部まで読み込みが完了するまで数秒かかります。")
 
 if frame.empty:
     st.error("市場データを取得できませんでした。ネットワーク接続を確認して再度更新してください。")
