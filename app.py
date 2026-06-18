@@ -396,7 +396,11 @@ FEAT_LABELS = {
 def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
     """1資産分のローソク足チャートと予測（強化版）を描画する。"""
     # --- 価格チャート ---
-    st.subheader(f"{name} 推移（ローソク足 + 移動平均）")
+    st.markdown(
+        f"<div style='text-align:center; font-weight:700; color:#E9C766; "
+        f"font-size:clamp(1.6rem, 5.5vw, 2.4rem); margin:0.2em 0;'>{name} 推移</div>",
+        unsafe_allow_html=True,
+    )
     ohlc = raw.get(asset_key)
     if ohlc is None or ohlc.empty:
         st.info(f"{name} の価格データを取得できませんでした。")
