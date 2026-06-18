@@ -735,7 +735,7 @@ def render_etf_panel(
     baseline_period: float | None = None, baseline_day: float | None = None,
     sort_col: str = "前日比 %", show_bar: bool = True, heading_small: bool = False,
     table_first: bool = False, subtitle: str | None = None,
-    heading_size: str = "1.2rem",
+    heading_size: str = "1.2rem", period_note: bool = False,
 ):
     """指定ETF群の前日比・期間騰落を棒グラフ＋テーブルで描画する。
 
@@ -814,6 +814,8 @@ def render_etf_panel(
     bar_col.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
     bar_col.caption(CHART_OP_HELP)
     tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
+    if period_note:
+        tbl_col.caption("※ 騰落期間を変更するには左上の >> から期間を変更してください")
 
 
 # セクター別 ETF
@@ -822,7 +824,7 @@ render_etf_panel(
     data_mod.SECTOR_ETFS, "業種",
     "前日比リターン（業種別）", "sector_bar",
     heading_small=True, table_first=True, subtitle="《参考資料》",
-    heading_size="1.8rem",
+    heading_size="1.8rem", period_note=True,
 )
 st.markdown("---")
 
