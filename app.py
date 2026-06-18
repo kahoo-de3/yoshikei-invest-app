@@ -746,14 +746,18 @@ items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
+    def _esc(s: str) -> str:
+        # $ は Streamlit の数式記法($...$)に誤解釈されるためエスケープ
+        return (s or "").replace("$", "\\$")
+
     for it in items:
+        title = _esc(it["title"])
         # 英語見出しに日本語訳が取れていれば下に併記
-        ja = it.get("title_ja")
-        sub = f"{it['source']} ｜ {it['published']}"
-        if ja:
-            sub = f"🇯🇵 {ja}<br>{it['source']} ｜ {it['published']}"
+        ja = _esc(it.get("title_ja"))
+        src = f"{it['source']} ｜ {it['published']}"
+        sub = f"🇯🇵 {ja}<br>{src}" if ja else src
         st.markdown(
-            f"- [{it['title']}]({it['link']})  \n  <small>{sub}</small>",
+            f"- [{title}]({it['link']})  \n  <small>{sub}</small>",
             unsafe_allow_html=True,
         )
 
