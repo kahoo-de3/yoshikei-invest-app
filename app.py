@@ -284,7 +284,7 @@ raw, frame = load_data(period)
 st.markdown(
     """
     <div style="text-align:center; font-weight:700; color:#E9C766;
-                font-size:clamp(1.3rem, 5vw, 2.3rem); line-height:1.2; margin:0;
+                font-size:1.8rem; line-height:1.2; margin:0;
                 white-space:nowrap;">
         Index 投資は楽しい
     </div>
