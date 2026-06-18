@@ -730,8 +730,11 @@ render_etf_panel(
 st.markdown("---")
 
 # ---- 経済ニュース ----
-st.subheader("🌍 経済・国際ニュース")
-st.caption("NHK・Yahoo!ニュースの日本語フィードから経済・国際の見出しを表示しています。")
+st.subheader("🌍 経済・国際ニュース（金利・株価）")
+st.caption(
+    "金利・株価に関する見出しに絞って表示しています。"
+    "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語）から取得。"
+)
 items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
