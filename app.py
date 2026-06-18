@@ -708,6 +708,7 @@ def render_etf_panel(
     title: str, name_map: dict, label_col: str, bar_title: str, chart_key: str,
     baseline_period: float | None = None, baseline_day: float | None = None,
     sort_col: str = "前日比 %", show_bar: bool = True, heading_small: bool = False,
+    table_first: bool = False,
 ):
     """指定ETF群の前日比・期間騰落を棒グラフ＋テーブルで描画する。
 
@@ -756,7 +757,6 @@ def render_etf_panel(
         st.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
         return
 
-    b1, b2 = st.columns([3, 2])
     bar = go.Figure(
         go.Bar(
             x=df[sort_col], y=df[label_col], orientation="h",
@@ -769,9 +769,14 @@ def render_etf_panel(
         margin=dict(l=10, r=10, t=40, b=10),
         xaxis_title=f"{sort_col}（リターン）", yaxis=dict(title=label_col, autorange="reversed"),
     )
-    b1.caption(CHART_OP_HELP)
-    b1.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
-    b2.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
+    # table_first=True なら 表を左・グラフを右 に入れ替える
+    if table_first:
+        tbl_col, bar_col = st.columns([2, 3])
+    else:
+        bar_col, tbl_col = st.columns([3, 2])
+    bar_col.caption(CHART_OP_HELP)
+    bar_col.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
+    tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
 
 
 # 主要指数
@@ -788,7 +793,7 @@ render_etf_panel(
     "セクター別 ETF パフォーマンス",
     data_mod.SECTOR_ETFS, "セクター",
     "前日比リターン（セクター別）", "sector_bar",
-    heading_small=True,
+    heading_small=True, table_first=True,
 )
 st.markdown("---")
 
