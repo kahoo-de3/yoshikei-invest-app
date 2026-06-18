@@ -229,7 +229,9 @@ inject_theme()
 def load_data(period: str):
     raw = data_mod.fetch_all(period=period)
     frame = data_mod.build_feature_frame(raw)
-    return raw, frame
+    # 取得時刻（キャッシュ生成時）を日本時間で記録
+    fetched_at = pd.Timestamp.now(tz="Asia/Tokyo").strftime("%Y/%m/%d %H:%M")
+    return raw, frame, fetched_at
 
 
 @st.cache_data(ttl=900, show_spinner="セクターETFを取得中...")  # 15分
@@ -279,7 +281,7 @@ st.sidebar.caption(
 )
 
 # ---- データロード ----
-raw, frame = load_data(period)
+raw, frame, fetched_at = load_data(period)
 
 st.markdown(
     """
@@ -312,10 +314,17 @@ prev = frame.dropna(subset=["sp500_close"]).iloc[-2]
 sp_change = latest["sp500_close"] - prev["sp500_close"]
 sp_change_pct = sp_change / prev["sp500_close"] * 100
 
-_data_date = latest.name.strftime("%Y/%m/%d") if hasattr(latest.name, "strftime") else str(latest.name)
+# 取引日の米国引け(16:00 ET)を日本時間に変換して「データ基準日」を表示
+try:
+    _close_et = pd.Timestamp(latest.name).normalize() + pd.Timedelta(hours=16)
+    _jst = _close_et.tz_localize("America/New_York").tz_convert("Asia/Tokyo")
+    _data_date = _jst.strftime("%Y/%m/%d %H:%M（日本時間）")
+except Exception:
+    _data_date = pd.Timestamp(latest.name).strftime("%Y/%m/%d")
 st.markdown(
     "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
-    f"※ 下記カードは <b>{_data_date}</b> 時点のデータ。下段の増減はいずれも <b>前日比</b> です。</div>",
+    f"※ 下記カードは米国引け <b>{_data_date}</b> 時点のデータ。下段の増減はいずれも <b>前日比</b> です。<br>"
+    f"データ取得時刻：{fetched_at}（日本時間）</div>",
     unsafe_allow_html=True,
 )
 
