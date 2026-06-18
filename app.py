@@ -804,9 +804,9 @@ def render_etf_panel(
 
 # セクター別 ETF
 render_etf_panel(
-    "セクター別 パフォーマンス",
+    "業種別 パフォーマンス",
     data_mod.SECTOR_ETFS, "セクター",
-    "前日比リターン（セクター別）", "sector_bar",
+    "前日比リターン（業種別）", "sector_bar",
     heading_small=True, table_first=True, subtitle="《参考資料》",
     heading_size="1.8rem",
 )
