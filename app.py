@@ -714,7 +714,7 @@ def render_etf_panel(
     title: str, name_map: dict, label_col: str, bar_title: str, chart_key: str,
     baseline_period: float | None = None, baseline_day: float | None = None,
     sort_col: str = "前日比 %", show_bar: bool = True, heading_small: bool = False,
-    table_first: bool = False,
+    table_first: bool = False, subtitle: str | None = None,
 ):
     """指定ETF群の前日比・期間騰落を棒グラフ＋テーブルで描画する。
 
@@ -726,6 +726,12 @@ def render_etf_panel(
         section_title(title)
     else:
         st.subheader(title)
+    if subtitle:
+        st.markdown(
+            f"<div style='text-align:center; font-weight:700; color:#E9C766; "
+            f"font-size:1.2rem; margin:0.1em 0 0.4em 0;'>{subtitle}</div>",
+            unsafe_allow_html=True,
+        )
     closes = load_group(tuple(name_map.keys()), period)
     if closes.empty:
         st.info("データを取得できませんでした。")
@@ -790,7 +796,7 @@ render_etf_panel(
     "セクター別 ETF パフォーマンス",
     data_mod.SECTOR_ETFS, "セクター",
     "前日比リターン（セクター別）", "sector_bar",
-    heading_small=True, table_first=True,
+    heading_small=True, table_first=True, subtitle="《参考資料》",
 )
 st.markdown("---")
 
