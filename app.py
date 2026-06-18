@@ -214,7 +214,7 @@ def load_fund_profile(ticker: str):
     return data_mod.fetch_fund_profile(ticker)
 
 
-@st.cache_data(ttl=600, show_spinner="ニュースを取得中...")  # 10分
+@st.cache_data(ttl=300, show_spinner="ニュースを取得中...")  # 5分
 def load_news():
     return news_mod.fetch_news()
 
