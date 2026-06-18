@@ -618,7 +618,11 @@ with tab_acwi:
 st.markdown("---")
 
 # ---- 組み入れ銘柄（組入銘柄・セクター構成） ----
-section_title("index組み入れ銘柄")
+st.markdown(
+    "<div style='text-align:center; font-weight:700; color:#E9C766; "
+    "font-size:1.8rem; margin:0.3em 0;'>Index 組み入れ銘柄</div>",
+    unsafe_allow_html=True,
+)
 st.caption(
     "それぞれのファンドが「どんな会社」に「どの業種に」どれくらい投資しているかの内訳です。"
     "S&P500は米国大型株、SCHDは米国の高配当・割安株、オルカンは全世界の株式に分散投資します。"
