@@ -317,8 +317,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- 1段目: S&P500 → S&P500先物 → NASDAQ → SCHD ---
-# スマホは縦1列に積まれるため、先物を S&P500 の直後（真下）に置く。
+# --- 1段目: S&P500 → S&P500先物 → 先物乖離 → NASDAQ ---
+# スマホは縦1列に積まれるため、この順番がそのまま縦の並びになる。
 c1, c2, c3, c4 = st.columns(4)
 c1.metric(
     "S&P500（前日比）",
@@ -329,31 +329,31 @@ if "fut_close" in frame.columns:
     fut_now = frame["fut_close"].dropna().iloc[-1]
     fut_prev = frame["fut_close"].dropna().iloc[-2]
     c2.metric("S&P500 先物 ES（前日比）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f}")
+if "fut_gap" in frame.columns:
+    gap = frame["fut_gap"].dropna().iloc[-1] * 100
+    c3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
 if "nasdaq_close" in frame.columns:
     nq_s = frame["nasdaq_close"].dropna()
     nq_chg = nq_s.iloc[-1] - nq_s.iloc[-2]
     nq_pct = nq_chg / nq_s.iloc[-2] * 100
-    c3.metric("NASDAQ100（前日比）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)")
+    c4.metric("NASDAQ100（前日比）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)")
+
+# --- 2段目: SCHD → オルカン → VIX ---
+d1, d2, d3, d4 = st.columns(4)
 if "schd_close" in frame.columns:
     schd_s = frame["schd_close"].dropna()
     schd_chg = schd_s.iloc[-1] - schd_s.iloc[-2]
     schd_pct = schd_chg / schd_s.iloc[-2] * 100
-    c4.metric("SCHD（前日比）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)")
-
-# --- 2段目: オルカン → VIX → 先物-現物乖離 ---
-d1, d2, d3, d4 = st.columns(4)
+    d1.metric("SCHD（前日比）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)")
 if "acwi_jp_close" in frame.columns:
     acwi_s = frame["acwi_jp_close"].dropna()
     acwi_chg = acwi_s.iloc[-1] - acwi_s.iloc[-2]
     acwi_pct = acwi_chg / acwi_s.iloc[-2] * 100
-    d1.metric("オルカン・円建（前日比）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
+    d2.metric("オルカン・円建（前日比）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
 if "vix_close" in frame.columns:
     vix_now = frame["vix_close"].dropna().iloc[-1]
     vix_prev = frame["vix_close"].dropna().iloc[-2]
-    d2.metric("VIX 指数（前日比）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse")
-if "fut_gap" in frame.columns:
-    gap = frame["fut_gap"].dropna().iloc[-1] * 100
-    d3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
+    d3.metric("VIX 指数（前日比）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse")
 
 # ---- 為替・金利メトリクス ----
 m1, m2, m3, m4 = st.columns(4)
