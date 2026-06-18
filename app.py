@@ -340,16 +340,16 @@ if "acwi_jp_close" in frame.columns:
     acwi_pct = acwi_chg / acwi_s.iloc[-2] * 100
     c4.metric("オルカン・円建（前日比）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
 
-# --- 市場環境指標 ---
-d1, d2, d3 = st.columns(3)
-if "vix_close" in frame.columns:
-    vix_now = frame["vix_close"].dropna().iloc[-1]
-    vix_prev = frame["vix_close"].dropna().iloc[-2]
-    d1.metric("VIX 指数（前日比）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse")
+# --- 市場環境指標（S&P500 先物を S&P500 の真下に配置するため4列）---
+d1, d2, d3, d4 = st.columns(4)
 if "fut_close" in frame.columns:
     fut_now = frame["fut_close"].dropna().iloc[-1]
     fut_prev = frame["fut_close"].dropna().iloc[-2]
-    d2.metric("S&P500 先物 ES（前日比）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f}")
+    d1.metric("S&P500 先物 ES（前日比）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f}")
+if "vix_close" in frame.columns:
+    vix_now = frame["vix_close"].dropna().iloc[-1]
+    vix_prev = frame["vix_close"].dropna().iloc[-2]
+    d2.metric("VIX 指数（前日比）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse")
 if "fut_gap" in frame.columns:
     gap = frame["fut_gap"].dropna().iloc[-1] * 100
     d3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
