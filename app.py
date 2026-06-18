@@ -708,14 +708,22 @@ st.markdown("---")
 def render_etf_panel(
     title: str, name_map: dict, label_col: str, bar_title: str, chart_key: str,
     baseline_period: float | None = None, baseline_day: float | None = None,
-    sort_col: str = "前日比 %", show_bar: bool = True,
+    sort_col: str = "前日比 %", show_bar: bool = True, heading_small: bool = False,
 ):
     """指定ETF群の前日比・期間騰落を棒グラフ＋テーブルで描画する。
 
     baseline_period / baseline_day を渡すと、それぞれ
     「対S&P500(期間)」「対S&P500(前日比)」の相対パフォーマンス列を追加する。
+    heading_small=True で見出しを「セクター構成比率」と同じ小さめ金文字にする。
     """
-    st.subheader(title)
+    if heading_small:
+        st.markdown(
+            f"<div style='text-align:center; font-weight:700; color:#E9C766; "
+            f"font-size:1.2rem;'>{title}</div>",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.subheader(title)
     closes = load_group(tuple(name_map.keys()), period)
     if closes.empty:
         st.info("データを取得できませんでした。")
@@ -773,9 +781,10 @@ def render_etf_panel(
 
 # 主要指数
 render_etf_panel(
-    "📊 主要株価指数",
+    "主要株価指数",
     data_mod.INDEX_ETFS, "指数",
     "前日比リターン（主要指数）", "idx_bar",
+    heading_small=True,
 )
 st.markdown("---")
 
