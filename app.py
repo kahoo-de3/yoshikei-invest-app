@@ -586,7 +586,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
 
 st.markdown(
     "<div style='text-align:center; font-weight:700; color:#E9C766; "
-    "font-size:1.8rem; margin:0.3em 0;'>index chart</div>",
+    "font-size:1.8rem; margin:0.3em 0;'>Index chart</div>",
     unsafe_allow_html=True,
 )
 tab_sp, tab_nasdaq, tab_schd, tab_acwi = st.tabs(
