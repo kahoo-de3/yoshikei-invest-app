@@ -528,6 +528,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
         st.plotly_chart(ifig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
 
+section_title("各インデックスの推移")
 tab_sp, tab_nasdaq, tab_schd, tab_acwi = st.tabs(
     ["① S&P500", "② NASDAQ100", "③ SCHD", "④ 全世界株式(オルカン)"]
 )
