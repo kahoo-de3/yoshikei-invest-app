@@ -831,7 +831,11 @@ st.caption(
 st.markdown("---")
 
 # ---- 経済ニュース ----
-section_title("経済・国際ニュース（金利・株価）")
+st.markdown(
+    "<div style='text-align:center; font-weight:700; color:#E9C766; "
+    "font-size:1.8rem; margin:0.3em 0;'>金利・株価ニュース</div>",
+    unsafe_allow_html=True,
+)
 st.caption(
     "金利・株価に関する見出しに絞って表示しています。"
     "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語＋日本語訳を併記）から取得。"
