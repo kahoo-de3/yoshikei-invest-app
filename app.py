@@ -217,7 +217,7 @@ def load_fund_profile(ticker: str):
 # ニュース取得ロジックを変えたらこの版数を上げる（キャッシュ強制無効化用）。
 # Streamlit は load_news 自体の変化しか検知しないため、別モジュール側の
 # 変更を確実に反映させるにはこの引数を変える必要がある。
-_NEWS_VER = "2026-06-filter-us-en"
+_NEWS_VER = "2026-06-filter-us-bilingual"
 
 
 @st.cache_data(ttl=300, show_spinner="ニュースを取得中...")  # 5分
@@ -739,15 +739,20 @@ st.markdown("---")
 st.subheader("🌍 経済・国際ニュース（金利・株価）")
 st.caption(
     "金利・株価に関する見出しに絞って表示しています。"
-    "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語のまま）から取得。"
+    "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語＋日本語訳を併記）から取得。"
 )
 items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     for it in items:
+        # 英語見出しに日本語訳が取れていれば下に併記
+        ja = it.get("title_ja")
+        sub = f"{it['source']} ｜ {it['published']}"
+        if ja:
+            sub = f"🇯🇵 {ja}<br>{it['source']} ｜ {it['published']}"
         st.markdown(
-            f"- [{it['title']}]({it['link']})  \n  <small>{it['source']} ｜ {it['published']}</small>",
+            f"- [{it['title']}]({it['link']})  \n  <small>{sub}</small>",
             unsafe_allow_html=True,
         )
 
