@@ -499,7 +499,7 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
 
 
 tab_sp, tab_nasdaq, tab_schd, tab_acwi = st.tabs(
-    ["📈 S&P500", "💻 NASDAQ100", "💵 SCHD", "🌍 全世界株式(オルカン)"]
+    ["① S&P500", "② NASDAQ100", "③ SCHD", "④ 全世界株式(オルカン)"]
 )
 with tab_sp:
     render_asset("sp500", "S&P500", "sp500_close", "sp500_ret")
@@ -595,7 +595,7 @@ def render_fund_profile(name: str, ticker: str):
             st.plotly_chart(pie, use_container_width=True, key=f"pie_{ticker}", theme=None, config=MOBILE_CONFIG)
 
 
-ftab1, ftab2, ftab3, ftab4 = st.tabs(["📈 S&P500", "💻 NASDAQ100", "💵 SCHD", "🌍 オルカン"])
+ftab1, ftab2, ftab3, ftab4 = st.tabs(["① S&P500", "② NASDAQ100", "③ SCHD", "④ オルカン"])
 with ftab1:
     render_fund_profile("S&P500", data_mod.FUND_PROXIES["S&P500"])
 with ftab2:
