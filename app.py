@@ -632,7 +632,8 @@ def render_fund_profile(name: str, ticker: str):
         f"<h4 style='text-align:center;'>{name}（{ticker} ベース）</h4>",
         unsafe_allow_html=True,
     )
-    col_h, col_s = st.columns([1, 1])
+    # 左にセクター構成比率、右に組入上位銘柄（位置を入れ替え）
+    col_s, col_h = st.columns([1, 1])
 
     # 組入上位銘柄
     with col_h:
