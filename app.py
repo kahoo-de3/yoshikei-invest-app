@@ -351,7 +351,7 @@ if "nasdaq_close" in frame.columns:
     nq_s = frame["nasdaq_close"].dropna()
     nq_chg = nq_s.iloc[-1] - nq_s.iloc[-2]
     nq_pct = nq_chg / nq_s.iloc[-2] * 100
-    c4.metric("NASDAQ100（前日比）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)")
+    c4.metric("NASDAQ100（QQQ・米ドル）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)")
 
 # --- 2段目: SCHD → オルカン → VIX ---
 d1, d2, d3, d4 = st.columns(4)
