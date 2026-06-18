@@ -814,7 +814,7 @@ st.markdown("---")
 sp_series = frame["sp500_close"].dropna()
 sp_day_chg = (sp_series.iloc[-1] / sp_series.iloc[-2] - 1) * 100
 render_etf_panel(
-    "ディフェンシブ / 資金逃避先",
+    "資金逃避先",
     data_mod.DEFENSIVE_ETFS, "資産",
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
