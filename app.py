@@ -874,7 +874,7 @@ st.markdown(
     "<div style='text-align:center; margin:0.3em 0;'>"
     "<a href='https://www.am.mufg.jp/tool/simulation_tsumitate.html' target='_blank' "
     "style='font-weight:700; color:#E9C766; font-size:1.8rem; text-decoration:none;'>"
-    "積み立て＆取り崩しシミュレーション（MUFG外部サイト）</a></div>",
+    "積み立て＆取り崩し<br>シミュレーション（MUFG外部サイト）</a></div>",
     unsafe_allow_html=True,
 )
 
