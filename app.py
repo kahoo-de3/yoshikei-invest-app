@@ -622,7 +622,7 @@ st.markdown("---")
 # ---- 組み入れ銘柄（組入銘柄・セクター構成） ----
 st.markdown(
     "<div style='text-align:center; font-weight:700; color:#E9C766; "
-    "font-size:1.8rem; margin:0.3em 0;'>Index 組み入れ銘柄</div>",
+    "font-size:1.8rem; margin:0.3em 0;'>Index 構成概要</div>",
     unsafe_allow_html=True,
 )
 st.caption(
