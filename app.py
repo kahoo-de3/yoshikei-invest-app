@@ -328,7 +328,8 @@ c1.metric(
 if "fut_close" in frame.columns:
     fut_now = frame["fut_close"].dropna().iloc[-1]
     fut_prev = frame["fut_close"].dropna().iloc[-2]
-    c2.metric("S&P500 先物 ES（前日比）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f}")
+    fut_pct = (fut_now - fut_prev) / fut_prev * 100
+    c2.metric("S&P500 先物 ES（前日比）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f} ({fut_pct:+.2f}%)")
 if "fut_gap" in frame.columns:
     gap = frame["fut_gap"].dropna().iloc[-1] * 100
     c3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
