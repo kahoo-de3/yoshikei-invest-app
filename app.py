@@ -214,8 +214,14 @@ def load_fund_profile(ticker: str):
     return data_mod.fetch_fund_profile(ticker)
 
 
+# ニュース取得ロジックを変えたらこの版数を上げる（キャッシュ強制無効化用）。
+# Streamlit は load_news 自体の変化しか検知しないため、別モジュール側の
+# 変更を確実に反映させるにはこの引数を変える必要がある。
+_NEWS_VER = "2026-06-filter-us-en"
+
+
 @st.cache_data(ttl=300, show_spinner="ニュースを取得中...")  # 5分
-def load_news():
+def load_news(version: str = _NEWS_VER):
     return news_mod.fetch_news()
 
 
