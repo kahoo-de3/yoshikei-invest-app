@@ -338,12 +338,13 @@ c1.metric(
     "S&P500（^GSPC・指数）",
     f"{latest['sp500_close']:,.2f}",
     f"{sp_change:+,.2f} ({sp_change_pct:+.2f}%)",
+    help="S&P 500 株価指数（米国大型株500社の時価総額加重平均）",
 )
 if "fut_close" in frame.columns:
     fut_now = frame["fut_close"].dropna().iloc[-1]
     fut_prev = frame["fut_close"].dropna().iloc[-2]
     fut_pct = (fut_now - fut_prev) / fut_prev * 100
-    c2.metric("S&P500 先物（ES=F）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f} ({fut_pct:+.2f}%)")
+    c2.metric("S&P500 先物（ES=F）", f"{fut_now:,.2f}", f"{fut_now - fut_prev:+,.2f} ({fut_pct:+.2f}%)", help="S&P500 E-mini 先物（CME上場・ほぼ24時間取引）")
 if "fut_gap" in frame.columns:
     gap = frame["fut_gap"].dropna().iloc[-1] * 100
     c3.metric("先物 - 現物 乖離（現在値）", f"{gap:+.2f}%", help="先物が現物より高い=強気センチメントの目安")
@@ -351,7 +352,7 @@ if "nasdaq_close" in frame.columns:
     nq_s = frame["nasdaq_close"].dropna()
     nq_chg = nq_s.iloc[-1] - nq_s.iloc[-2]
     nq_pct = nq_chg / nq_s.iloc[-2] * 100
-    c4.metric("NASDAQ100（QQQ・米ドル）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)")
+    c4.metric("NASDAQ100（QQQ・米ドル）", f"{nq_s.iloc[-1]:,.2f}", f"{nq_chg:+,.2f} ({nq_pct:+.2f}%)", help="Invesco QQQ Trust（NASDAQ100連動ETF・米ドル建て）")
 
 # --- 2段目: SCHD → オルカン → VIX ---
 d1, d2, d3, d4 = st.columns(4)
@@ -359,16 +360,16 @@ if "schd_close" in frame.columns:
     schd_s = frame["schd_close"].dropna()
     schd_chg = schd_s.iloc[-1] - schd_s.iloc[-2]
     schd_pct = schd_chg / schd_s.iloc[-2] * 100
-    d1.metric("SCHD（米ドル）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)")
+    d1.metric("SCHD（米ドル）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)", help="Schwab 米国配当株式 ETF（高配当・連続増配銘柄・米ドル建て）")
 if "acwi_jp_close" in frame.columns:
     acwi_s = frame["acwi_jp_close"].dropna()
     acwi_chg = acwi_s.iloc[-1] - acwi_s.iloc[-2]
     acwi_pct = acwi_chg / acwi_s.iloc[-2] * 100
-    d2.metric("オルカン（ACWI・円換算）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
+    d2.metric("オルカン（ACWI・円換算）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)", help="iShares MSCI ACWI ETF（全世界株式・USD建てをドル円で円換算。eMAXIS Slim 全世界株式のプロキシ）")
 if "vix_close" in frame.columns:
     vix_now = frame["vix_close"].dropna().iloc[-1]
     vix_prev = frame["vix_close"].dropna().iloc[-2]
-    d3.metric("VIX 指数（^VIX）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse")
+    d3.metric("VIX 指数（^VIX）", f"{vix_now:.2f}", f"{vix_now - vix_prev:+.2f}", delta_color="inverse", help="CBOE ボラティリティ指数（恐怖指数・S&P500の予想変動率）")
 
 # ---- 為替・金利メトリクス ----
 m1, m2, m3, m4 = st.columns(4)
