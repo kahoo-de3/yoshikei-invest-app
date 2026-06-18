@@ -214,19 +214,9 @@ def load_fund_profile(ticker: str):
     return data_mod.fetch_fund_profile(ticker)
 
 
-def _get_deepl_key() -> str | None:
-    """Streamlit secrets から DeepL API キーを安全に取得（無ければ None）。"""
-    try:
-        if "DEEPL_API_KEY" in st.secrets:
-            return st.secrets["DEEPL_API_KEY"]
-    except Exception:
-        pass
-    return None
-
-
 @st.cache_data(ttl=300, show_spinner="ニュースを取得中...")  # 5分
-def load_news(deepl_key: str | None):
-    return news_mod.fetch_news(deepl_key=deepl_key)
+def load_news():
+    return news_mod.fetch_news()
 
 
 # ---- サイドバー ----
@@ -743,21 +733,15 @@ st.markdown("---")
 st.subheader("🌍 経済・国際ニュース（金利・株価）")
 st.caption(
     "金利・株価に関する見出しに絞って表示しています。"
-    "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語）から取得。"
+    "国内はNHK・Yahoo!ニュース（日本語）、米国S&P500関連は米国Yahoo Finance（英語のまま）から取得。"
 )
-items = load_news(_get_deepl_key())
+items = load_news()
 if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     for it in items:
-        ja = it.get("title_ja") or it["title"]
-        orig = it["title"]
-        # 翻訳された（原文と異なる）英語ニュースは原文も小さく併記
-        sub = f"{it['source']} ｜ {it['published']}"
-        if ja != orig:
-            sub = f"{it['source']} ｜ {it['published']}<br>🔤 {orig}"
         st.markdown(
-            f"- [{ja}]({it['link']})  \n  <small>{sub}</small>",
+            f"- [{it['title']}]({it['link']})  \n  <small>{it['source']} ｜ {it['published']}</small>",
             unsafe_allow_html=True,
         )
 
