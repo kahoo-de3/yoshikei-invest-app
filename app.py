@@ -784,7 +784,7 @@ render_etf_panel(
     "主要株価指数",
     data_mod.INDEX_ETFS, "指数",
     "前日比リターン（主要指数）", "idx_bar",
-    heading_small=True,
+    heading_small=True, table_first=True,
 )
 st.markdown("---")
 
