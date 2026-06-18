@@ -404,7 +404,10 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
         st.plotly_chart(fig, use_container_width=True, theme=None, config=MOBILE_CONFIG)
 
     # --- 予測（翌日 + 区間 + 複数日 + 的中履歴） ---
-    st.markdown(f"#### 🔮 {name} の予測（参考シグナル）")
+    st.markdown(
+        f"<h4 style='text-align:center; color:#E9C766;'>{name}予測</h4>",
+        unsafe_allow_html=True,
+    )
     pred = model_mod.predict_asset(frame, close_col, ret_col, name)
     if pred is None:
         st.info("予測に十分なデータがありません。表示期間を長くして再度お試しください。")
