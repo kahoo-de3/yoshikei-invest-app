@@ -359,12 +359,12 @@ if "schd_close" in frame.columns:
     schd_s = frame["schd_close"].dropna()
     schd_chg = schd_s.iloc[-1] - schd_s.iloc[-2]
     schd_pct = schd_chg / schd_s.iloc[-2] * 100
-    d1.metric("SCHD（前日比）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)")
+    d1.metric("SCHD（米ドル）", f"{schd_s.iloc[-1]:,.2f}", f"{schd_chg:+,.2f} ({schd_pct:+.2f}%)")
 if "acwi_jp_close" in frame.columns:
     acwi_s = frame["acwi_jp_close"].dropna()
     acwi_chg = acwi_s.iloc[-1] - acwi_s.iloc[-2]
     acwi_pct = acwi_chg / acwi_s.iloc[-2] * 100
-    d2.metric("オルカン・円建（前日比）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
+    d2.metric("オルカン（ACWI・円換算）", f"{acwi_s.iloc[-1]:,.0f}", f"{acwi_chg:+,.0f} ({acwi_pct:+.2f}%)")
 if "vix_close" in frame.columns:
     vix_now = frame["vix_close"].dropna().iloc[-1]
     vix_prev = frame["vix_close"].dropna().iloc[-2]
