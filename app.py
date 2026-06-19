@@ -286,12 +286,13 @@ def load_news(version: str = _NEWS_VER):
 
 
 # ---- サイドバー ----
-PERIOD_JP = {"6mo": "6ヶ月", "1y": "1年", "3y": "3年", "5y": "5年", "max": "全期間"}
+PERIOD_JP = {"6mo": "6ヶ月", "1y": "1年", "3y": "3年", "5y": "5年", "10y": "10年", "max": "全期間"}
+_PERIOD_OPTIONS = ["6mo", "1y", "3y", "5y", "10y", "max"]
 st.sidebar.title("⚙️ 設定")
 period = st.sidebar.selectbox(
     "表示期間",
-    options=["6mo", "1y", "3y", "5y", "max"],
-    index=2,
+    options=_PERIOD_OPTIONS,
+    index=_PERIOD_OPTIONS.index("10y"),  # デフォルト10年
     format_func=lambda x: PERIOD_JP[x],
 )
 # 表示期間に応じた騰落列名（例: 3年騰落 %）
@@ -844,7 +845,7 @@ def render_etf_panel(
     bar_col.caption(CHART_OP_HELP)
     tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
     if period_note:
-        tbl_col.caption("※ 騰落期間（6mo/1y/3y/5y）を変更するには左上の >> から期間を変更してください")
+        tbl_col.caption("※ 騰落期間（6mo/1y/3y/5y/10y）を変更するには左上の >> から期間を変更してください")
 
 
 # セクター別 ETF
