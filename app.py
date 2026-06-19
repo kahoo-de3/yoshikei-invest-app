@@ -258,6 +258,11 @@ def load_data(period: str):
     return raw, frame, fetched_at
 
 
+@st.cache_data(ttl=3600, show_spinner="日本国債データを取得中...")  # 1時間
+def load_jgb():
+    return data_mod.fetch_jgb_yields()
+
+
 @st.cache_data(ttl=900, show_spinner="セクターETFを取得中...")  # 15分
 def load_sectors(period: str):
     return data_mod.fetch_sectors(period=period)
@@ -422,6 +427,35 @@ if "curve_spread" in frame.columns:
         delta_color="off",
         help="マイナス=逆イールド（景気後退の代表的サイン）",
     )
+
+# ---- 主要金利（米国10年・日本国債3/5/10年）----
+st.markdown(
+    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
+    "主要金利（米国10年債・日本国債）　下段は前日比</div>",
+    unsafe_allow_html=True,
+)
+g1, g2, g3, g4 = st.columns(4)
+if "ust10y_close" in frame.columns:
+    y10 = frame["ust10y_close"].dropna()
+    g1.metric("米国10年金利（^TNX）", f"{y10.iloc[-1]:.3f}%", f"{(y10.iloc[-1] - y10.iloc[-2]):+.3f}pt", delta_color="inverse", help="米国債10年 利回り")
+    card_note(g1, "米国債10年 利回り")
+_jgb = load_jgb()
+
+
+def _jgb_card(col, year: str):
+    """日本国債の指定年限カードを描画（財務省データ）。"""
+    if _jgb is not None and not _jgb.empty and year in _jgb.columns:
+        s = _jgb[year].dropna()
+        if len(s) >= 2:
+            col.metric(f"日本国債{year}", f"{s.iloc[-1]:.3f}%", f"{s.iloc[-1] - s.iloc[-2]:+.3f}pt", delta_color="inverse", help=f"日本国債{year} 利回り（財務省公表値）")
+            card_note(col, "財務省 公表利回り")
+            return
+    col.metric(f"日本国債{year}", "—", help="財務省データを取得できませんでした")
+
+
+_jgb_card(g2, "3年")
+_jgb_card(g3, "5年")
+_jgb_card(g4, "10年")
 
 # ---- ドル指数・利回り差の簡潔な解説（9pt 程度の小さめ文字） ----
 st.markdown(

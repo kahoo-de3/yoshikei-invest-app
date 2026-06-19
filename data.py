@@ -6,10 +6,36 @@ APIキーは不要。取得結果はキャッシュして無駄な再取得を�
 from __future__ import annotations
 
 import datetime as dt
+import io
 import time
+import urllib.request
 
 import pandas as pd
 import yfinance as yf
+
+# 財務省（MOF）が公開する日本国債（JGB）の利回りCSV（当年分）
+_MOF_JGB_CSV = "https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv"
+
+
+def fetch_jgb_yields() -> pd.DataFrame:
+    """財務省CSVから日本国債の年限別利回り(%)を取得する。
+
+    戻り値: 列=年限('3年','5年','10年'など), 行=営業日。
+    取得・解析に失敗したら空 DataFrame を返す（UI側で握りつぶす）。
+    """
+    try:
+        req = urllib.request.Request(_MOF_JGB_CSV, headers={"User-Agent": "Mozilla/5.0"})
+        raw = urllib.request.urlopen(req, timeout=15).read()
+        # 1行目はタイトル行なので飛ばし、2行目をヘッダにする
+        df = pd.read_csv(io.BytesIO(raw), encoding="shift_jis", skiprows=1)
+        # 末尾の注記行など、10年が数値でない行を除去
+        df = df[pd.to_numeric(df.get("10年"), errors="coerce").notna()].copy()
+        for col in df.columns:
+            if col != "基準日":
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+        return df
+    except Exception:
+        return pd.DataFrame()
 
 # ティッカー定義
 TICKERS = {
