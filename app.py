@@ -523,9 +523,9 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
             ohlc.columns = ohlc.columns.get_level_values(0)
         fig = go.Figure()
         fig.add_trace(
-            go.Candlestick(
-                x=ohlc.index, open=ohlc["Open"], high=ohlc["High"],
-                low=ohlc["Low"], close=ohlc["Close"], name=name,
+            go.Scatter(
+                x=ohlc.index, y=ohlc["Close"], name=name,
+                line=dict(color="#1f77b4", width=1.8),
             )
         )
         fig.add_trace(go.Scatter(x=ohlc.index, y=ohlc["Close"].rolling(20).mean(), name="MA20", line=dict(width=1)))
