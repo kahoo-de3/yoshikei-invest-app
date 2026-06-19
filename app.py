@@ -188,6 +188,14 @@ def inject_theme():
         /* 本文が金貨の上に来るように */
         .block-container { position: relative; z-index: 1; }
 
+        /* チャート上の2本指ピンチをブラウザに横取りさせずPlotlyへ渡す */
+        [data-testid="stPlotlyChart"],
+        [data-testid="stPlotlyChart"] .js-plotly-plot,
+        [data-testid="stPlotlyChart"] .plot-container,
+        [data-testid="stPlotlyChart"] .nsewdrag {
+            touch-action: none !important;
+        }
+
         /* ===== スマートフォン最適化（横幅640px以下） ===== */
         @media (max-width: 640px) {
             .block-container {
