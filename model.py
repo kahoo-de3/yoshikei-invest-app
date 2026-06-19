@@ -128,6 +128,12 @@ def predict_asset(
     if len(model_df) < 50:
         return None
 
+    # 「全期間」など長期間でも予測の学習は直近に限定して高速化する
+    # （数万行を学習すると重くフリーズするため。チャート表示は全期間のまま）
+    MAX_TRAIN_ROWS = 1500  # 約6年分の営業日
+    if len(model_df) > MAX_TRAIN_ROWS:
+        model_df = model_df.iloc[-MAX_TRAIN_ROWS:]
+
     X = model_df[feat_cols].values
     y = model_df["target"].values
     closes = model_df[close_col].values
