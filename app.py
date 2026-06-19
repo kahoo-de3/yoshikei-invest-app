@@ -457,6 +457,29 @@ _jgb_card(g2, "3年")
 _jgb_card(g3, "5年")
 _jgb_card(g4, "10年")
 
+# ---- 日本の短期金利・長期金利（1年/10年国債）----
+st.markdown(
+    "<div style='text-align:center; font-size:0.85rem; color:#b8b4a8;'>"
+    "日本の短期金利・長期金利　下段は前日比</div>",
+    unsafe_allow_html=True,
+)
+h1, h2, h3, h4 = st.columns(4)
+
+
+def _jp_rate_card(col, label, year, note):
+    """日本の短期/長期金利カード（財務省データ）。"""
+    if _jgb is not None and not _jgb.empty and year in _jgb.columns:
+        s = _jgb[year].dropna()
+        if len(s) >= 2:
+            col.metric(label, f"{s.iloc[-1]:.3f}%", f"{s.iloc[-1] - s.iloc[-2]:+.3f}pt", delta_color="inverse", help=f"{note}（財務省公表値）")
+            card_note(col, note)
+            return
+    col.metric(label, "—", help="財務省データを取得できませんでした")
+
+
+_jp_rate_card(h1, "日本 短期金利", "1年", "日本国債1年 利回り")
+_jp_rate_card(h2, "日本 長期金利", "10年", "日本国債10年 利回り")
+
 # ---- ドル指数・利回り差の簡潔な解説（9pt 程度の小さめ文字） ----
 st.markdown(
     """
