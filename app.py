@@ -28,8 +28,15 @@ st.set_page_config(
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
 
-# スマホ向け: ツールバーは隠す。2本指ピンチでの拡大縮小を有効化（scrollZoom=True）。
-MOBILE_CONFIG = {"displayModeBar": False, "responsive": True, "scrollZoom": True}
+# スマホ向け: ツールバー（ズーム＋リセット）を表示しつつ、2本指ピンチも有効化。
+# ピンチで空白になっても「⌂ 軸をリセット」ボタンで一発で元に戻せる。
+MOBILE_CONFIG = {
+    "displayModeBar": True,
+    "displaylogo": False,
+    "responsive": True,
+    "scrollZoom": True,
+    "modeBarButtonsToRemove": ["select2d", "lasso2d", "toImage"],
+}
 
 # 各チャートの上に表示する操作説明（PC・スマホ共通）
 CHART_OP_HELP = (
