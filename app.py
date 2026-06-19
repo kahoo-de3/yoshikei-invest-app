@@ -28,8 +28,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed",  # スマホで本文を広く使う
 )
 
-# スマホ向け: チャートのツールバーを隠しレスポンシブ化（指スクロールを優先）
-MOBILE_CONFIG = {"displayModeBar": False, "responsive": True, "scrollZoom": False}
+# スマホ向け: ツールバーは隠す。2本指ピンチでの拡大縮小を有効化（scrollZoom=True）。
+MOBILE_CONFIG = {"displayModeBar": False, "responsive": True, "scrollZoom": True}
 
 # 各チャートの上に表示する操作説明（PC・スマホ共通）
 CHART_OP_HELP = (
