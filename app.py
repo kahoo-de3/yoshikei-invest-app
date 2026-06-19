@@ -528,8 +528,6 @@ def render_asset(asset_key: str, name: str, close_col: str, ret_col: str):
                 line=dict(color="#1f77b4", width=1.8),
             )
         )
-        fig.add_trace(go.Scatter(x=ohlc.index, y=ohlc["Close"].rolling(20).mean(), name="MA20", line=dict(width=1)))
-        fig.add_trace(go.Scatter(x=ohlc.index, y=ohlc["Close"].rolling(50).mean(), name="MA50", line=dict(width=1)))
         fig.update_layout(
             template="light_chart", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", font_color="#222222",
             height=460, xaxis_rangeslider_visible=False,
