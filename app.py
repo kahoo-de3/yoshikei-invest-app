@@ -64,6 +64,22 @@ def card_note(col, text: str):
         unsafe_allow_html=True,
     )
 
+
+# 業種ごとの固定色（S&P500 の配色をベースに、全ファンドの業種構成比率で統一）
+SECTOR_COLORS = {
+    "情報技術": "#636EFA",
+    "金融": "#EF553B",
+    "ヘルスケア": "#00CC96",
+    "一般消費財": "#AB63FA",
+    "通信サービス": "#FFA15A",
+    "資本財": "#19D3F3",
+    "生活必需品": "#FF6692",
+    "エネルギー": "#B6E880",
+    "公益": "#FF97FF",
+    "不動産": "#FECB52",
+    "素材": "#8C564B",
+}
+
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
 pio.templates["light_chart"] = go.layout.Template(
@@ -408,19 +424,16 @@ if "vix_close" in frame.columns:
     card_note(d3, "CBOE ボラティリティ指数")
 
 # ---- 為替・金利メトリクス ----
-m1, m2, m3, m4 = st.columns(4)
+m1, m2, m3 = st.columns(3)
 if "usdjpy_close" in frame.columns:
     jpy = frame["usdjpy_close"].dropna()
     m1.metric("USD/JPY（前日比）", f"{jpy.iloc[-1]:.2f}", f"{jpy.iloc[-1] - jpy.iloc[-2]:+.2f}")
 if "dxy_close" in frame.columns:
     dxy = frame["dxy_close"].dropna()
     m2.metric("ドル指数（対主要通貨・前日比）", f"{dxy.iloc[-1]:.2f}", f"{dxy.iloc[-1] - dxy.iloc[-2]:+.2f}", help="米ドルの主要6通貨に対する強さ（DXY）。上昇=ドル高")
-if "ust10y_close" in frame.columns:
-    y10 = frame["ust10y_close"].dropna()
-    m3.metric("米国10年債（前日差）", f"{y10.iloc[-1]:.2f}%", f"{(y10.iloc[-1] - y10.iloc[-2]):+.2f}pt", delta_color="inverse")
 if "curve_spread" in frame.columns:
     cs = frame["curve_spread"].dropna().iloc[-1]
-    m4.metric(
+    m3.metric(
         "利回り差（10年-3ヶ月）",
         f"{cs:+.2f}pt",
         "逆イールド" if cs < 0 else "順イールド",
@@ -788,11 +801,13 @@ def render_fund_profile(name: str, ticker: str):
             items.sort(key=lambda x: x[1], reverse=True)
             labels = [i[0] for i in items]
             values = [i[1] * 100 for i in items]
+            # 業種ごとに固定色を割り当て（全ファンドで同じ業種＝同じ色）
+            colors = [SECTOR_COLORS.get(lbl, "#9aa0a6") for lbl in labels]
             pie = go.Figure(
                 go.Pie(
                     labels=labels, values=values, hole=0.4,
                     textinfo="label+percent", textposition="inside",
-                    sort=False,
+                    sort=False, marker=dict(colors=colors),
                 )
             )
             pie.update_layout(
