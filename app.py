@@ -162,6 +162,16 @@ SECTOR_ETF_COLORS = {
     "XLC": SECTOR_COLORS["communication_services"],
 }
 
+# 資金逃避先ETF → 業種色（対応する業種があるものだけ。無いものは未着色＝黒のまま）
+DEFENSIVE_ETF_COLORS = {
+    "XLU": SECTOR_COLORS["utilities"],          # 公益
+    "XLP": SECTOR_COLORS["consumer_defensive"], # 生活必需品
+    "XLV": SECTOR_COLORS["healthcare"],         # ヘルスケア
+    "XLE": SECTOR_COLORS["energy"],             # エネルギー
+    "VNQ": SECTOR_COLORS["realestate"],         # 不動産（REIT）
+    # GLD(金)・TLT(米国債)・IGF/PAVE(インフラ) は対応業種なし → 黒のまま
+}
+
 
 def _text_on(hexc: str) -> str:
     """背景色の明るさに応じて、読みやすい文字色(黒/白)を返す。"""
@@ -1008,7 +1018,9 @@ def render_etf_panel(
         if bar_colors:
             def _row_c(row):
                 pos = df_show.index.get_indexer([row.name])[0]
-                c = bar_colors.get(_order[pos], "#cccccc")
+                c = bar_colors.get(_order[pos])
+                if not c:
+                    return [""] * len(row)  # 対応色なし→そのまま（黒）
                 return [f"background-color: {c}; color: {_text_on(c)}"] * len(row)
             sty = sty.apply(_row_c, axis=1)
         return sty
@@ -1066,7 +1078,7 @@ render_etf_panel(
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
     sort_col="前日比 %", show_bar=False, heading_small=True, subtitle="《参考資料》",
-    heading_size="1.8rem",
+    heading_size="1.8rem", bar_colors=DEFENSIVE_ETF_COLORS,
 )
 st.markdown(
     """
