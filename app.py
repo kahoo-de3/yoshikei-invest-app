@@ -81,6 +81,29 @@ SECTOR_COLORS = {
     "basic_materials": "#9A6324",      # 素材 ・茶
 }
 
+# 組入上位銘柄（主要ティッカー）→ 業種キー。表の行を業種色で塗るのに使う。
+STOCK_SECTOR = {
+    "MSFT": "technology", "AAPL": "technology", "NVDA": "technology",
+    "AVGO": "technology", "CSCO": "technology",
+    "AMZN": "consumer_cyclical", "TSLA": "consumer_cyclical",
+    "META": "communication_services", "GOOGL": "communication_services",
+    "GOOG": "communication_services", "VZ": "communication_services",
+    "BRK.B": "financial_services", "JPM": "financial_services",
+    "LLY": "healthcare", "PFE": "healthcare",
+    "COST": "consumer_defensive", "MO": "consumer_defensive",
+    "PEP": "consumer_defensive", "KO": "consumer_defensive",
+    "EOG": "energy", "CVX": "energy",
+    "LMT": "industrials",
+    "PKG": "basic_materials",
+}
+
+
+def _hex_to_rgba(hexc: str, alpha: float) -> str:
+    """#RRGGBB を rgba(...) 文字列にする（表の薄い背景色用）。"""
+    h = hexc.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{alpha})"
+
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
 pio.templates["light_chart"] = go.layout.Template(
@@ -781,7 +804,17 @@ def render_fund_profile(name: str, ticker: str):
             tbl = tbl.rename(columns=rename_map)
             if "構成比" in tbl.columns:
                 tbl["構成比"] = (tbl["構成比"] * 100).round(2).astype(str) + "%"
-            st.dataframe(tbl, use_container_width=True, hide_index=True, height=400)
+
+            # 各行を、その銘柄の所属業種の色（業種構成比率と同じ配色）で薄く塗る
+            def _row_sector_style(row):
+                sym = str(row.get("シンボル", "")).strip().upper()
+                key = STOCK_SECTOR.get(sym)
+                color = SECTOR_COLORS.get(key) if key else None
+                bg = f"background-color: {_hex_to_rgba(color, 0.35)}" if color else ""
+                return [bg] * len(row)
+
+            styled = tbl.style.apply(_row_sector_style, axis=1)
+            st.dataframe(styled, use_container_width=True, hide_index=True, height=400)
             if prof.get("is_static"):
                 st.caption("※ 参考値（2026年6月時点の概算）。最新構成比は各ETF公式サイトでご確認ください。")
             else:
