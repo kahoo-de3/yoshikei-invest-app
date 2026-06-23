@@ -147,18 +147,12 @@ STOCK_SECTOR = {
 }
 
 
-def _pastel(hexc: str, mix: float = 0.78) -> str:
-    """業種色を白と混ぜた淡いパステル色(不透明)にする。
-
-    ダークテーマでも沈まないよう、半透明ではなく明るい単色にする。
-    mix は白の割合（大きいほど淡い）。
-    """
+def _text_on(hexc: str) -> str:
+    """背景色の明るさに応じて、読みやすい文字色(黒/白)を返す。"""
     h = hexc.lstrip("#")
     r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    r = int(r + (255 - r) * mix)
-    g = int(g + (255 - g) * mix)
-    b = int(b + (255 - b) * mix)
-    return f"#{r:02x}{g:02x}{b:02x}"
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    return "#000000" if lum > 150 else "#ffffff"
 
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
@@ -866,9 +860,12 @@ def render_fund_profile(name: str, ticker: str):
                 sym = str(row.get("シンボル", "")).strip().upper()
                 key = STOCK_SECTOR.get(sym)
                 color = SECTOR_COLORS.get(key) if key else None
-                # 白寄りの淡いパステル(不透明)＋濃い文字で、明るく読みやすく
-                bg = _pastel(color) if color else "#ededed"
-                return [f"background-color: {bg}; color: #1a1a1a"] * len(row)
+                # 業種構成比率(円グラフ)と同じ色をそのまま使用。
+                # 文字色は背景の明暗に応じて黒/白を自動選択。
+                if color:
+                    fg = _text_on(color)
+                    return [f"background-color: {color}; color: {fg}"] * len(row)
+                return ["background-color: #cccccc; color: #1a1a1a"] * len(row)
 
             styled = tbl.style.apply(_row_sector_style, axis=1)
             st.dataframe(styled, use_container_width=True, hide_index=True, height=400)
