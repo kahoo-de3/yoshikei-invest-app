@@ -65,19 +65,20 @@ def card_note(col, text: str):
     )
 
 
-# 業種ごとの固定色（S&P500 の配色をベースに、全ファンドの業種構成比率で統一）
+# 業種ごとの固定色（英語キー基準で、全ファンドの業種構成比率の色を統一）
+# データ元(ライブAPI/静的)で日本語ラベルがズレても英語キーは共通なので確実。
 SECTOR_COLORS = {
-    "情報技術": "#636EFA",
-    "金融": "#EF553B",
-    "ヘルスケア": "#00CC96",
-    "一般消費財": "#AB63FA",
-    "通信サービス": "#FFA15A",
-    "資本財": "#19D3F3",
-    "生活必需品": "#FF6692",
-    "エネルギー": "#B6E880",
-    "公益": "#FF97FF",
-    "不動産": "#FECB52",
-    "素材": "#8C564B",
+    "technology": "#636EFA",           # 情報技術
+    "financial_services": "#EF553B",   # 金融
+    "healthcare": "#00CC96",           # ヘルスケア
+    "consumer_cyclical": "#AB63FA",    # 一般消費財
+    "communication_services": "#FFA15A",  # 通信サービス
+    "industrials": "#19D3F3",          # 資本財
+    "consumer_defensive": "#FF6692",   # 生活必需品
+    "energy": "#B6E880",               # エネルギー
+    "utilities": "#FF97FF",            # 公益
+    "realestate": "#FECB52",           # 不動産
+    "basic_materials": "#8C564B",      # 素材
 }
 
 # ---- チャートだけライト配色にする共通テンプレート ----
@@ -797,12 +798,13 @@ def render_fund_profile(name: str, ticker: str):
         if not sectors:
             st.info("業種構成データを取得できませんでした。")
         else:
-            items = [(data_mod.SECTOR_JP.get(k, k), v) for k, v in sectors.items() if v and v > 0]
-            items.sort(key=lambda x: x[1], reverse=True)
-            labels = [i[0] for i in items]
-            values = [i[1] * 100 for i in items]
+            # (英語キー, 日本語ラベル, 比率) で保持し、色は英語キー基準で固定する
+            items = [(k, data_mod.SECTOR_JP.get(k, k), v) for k, v in sectors.items() if v and v > 0]
+            items.sort(key=lambda x: x[2], reverse=True)
+            labels = [i[1] for i in items]
+            values = [i[2] * 100 for i in items]
             # 業種ごとに固定色を割り当て（全ファンドで同じ業種＝同じ色）
-            colors = [SECTOR_COLORS.get(lbl, "#9aa0a6") for lbl in labels]
+            colors = [SECTOR_COLORS.get(i[0], "#9aa0a6") for i in items]
             pie = go.Figure(
                 go.Pie(
                     labels=labels, values=values, hole=0.4,
