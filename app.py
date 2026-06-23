@@ -169,7 +169,9 @@ DEFENSIVE_ETF_COLORS = {
     "XLV": SECTOR_COLORS["healthcare"],         # ヘルスケア
     "XLE": SECTOR_COLORS["energy"],             # エネルギー
     "VNQ": SECTOR_COLORS["realestate"],         # 不動産（REIT）
-    # GLD(金)・TLT(米国債)・IGF/PAVE(インフラ) は対応業種なし → 黒のまま
+    "GLD": ("#ffffff", "#d62828"),              # 金 → 白地に赤
+    "TLT": ("#ffffff", "#1f5fd8"),              # 米国債20年 → 白地に青
+    # IGF/PAVE(インフラ) は対応色なし → 黒のまま
 }
 
 
@@ -1021,7 +1023,12 @@ def render_etf_panel(
                 c = bar_colors.get(_order[pos])
                 if not c:
                     return [""] * len(row)  # 対応色なし→そのまま（黒）
-                return [f"background-color: {c}; color: {_text_on(c)}"] * len(row)
+                # 値が (背景, 文字色) のタプルなら個別指定、文字列なら背景色＋自動文字色
+                if isinstance(c, (tuple, list)):
+                    bg, fg = c
+                else:
+                    bg, fg = c, _text_on(c)
+                return [f"background-color: {bg}; color: {fg}"] * len(row)
             sty = sty.apply(_row_c, axis=1)
         return sty
 
