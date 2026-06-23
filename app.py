@@ -147,11 +147,18 @@ STOCK_SECTOR = {
 }
 
 
-def _hex_to_rgba(hexc: str, alpha: float) -> str:
-    """#RRGGBB を rgba(...) 文字列にする（表の薄い背景色用）。"""
+def _pastel(hexc: str, mix: float = 0.78) -> str:
+    """業種色を白と混ぜた淡いパステル色(不透明)にする。
+
+    ダークテーマでも沈まないよう、半透明ではなく明るい単色にする。
+    mix は白の割合（大きいほど淡い）。
+    """
     h = hexc.lstrip("#")
     r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return f"rgba({r},{g},{b},{alpha})"
+    r = int(r + (255 - r) * mix)
+    g = int(g + (255 - g) * mix)
+    b = int(b + (255 - b) * mix)
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 # ---- チャートだけライト配色にする共通テンプレート ----
 # 背景ダーク × チャートはライトで見やすく。縦軸・横軸に目盛りとグリッドを表示。
@@ -859,11 +866,8 @@ def render_fund_profile(name: str, ticker: str):
                 sym = str(row.get("シンボル", "")).strip().upper()
                 key = STOCK_SECTOR.get(sym)
                 color = SECTOR_COLORS.get(key) if key else None
-                if color:
-                    bg = _hex_to_rgba(color, 0.35)
-                else:
-                    # 業種未登録の銘柄は黒くならないよう薄い中立グレーにする
-                    bg = "rgba(120,120,120,0.18)"
+                # 白寄りの淡いパステル(不透明)＋濃い文字で、明るく読みやすく
+                bg = _pastel(color) if color else "#ededed"
                 return [f"background-color: {bg}; color: #1a1a1a"] * len(row)
 
             styled = tbl.style.apply(_row_sector_style, axis=1)
