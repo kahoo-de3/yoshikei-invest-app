@@ -68,17 +68,17 @@ def card_note(col, text: str):
 # 業種ごとの固定色（英語キー基準で、全ファンドの業種構成比率の色を統一）
 # データ元(ライブAPI/静的)で日本語ラベルがズレても英語キーは共通なので確実。
 SECTOR_COLORS = {
-    "technology": "#636EFA",           # 情報技術
-    "financial_services": "#EF553B",   # 金融
-    "healthcare": "#00CC96",           # ヘルスケア
-    "consumer_cyclical": "#AB63FA",    # 一般消費財
-    "communication_services": "#FFA15A",  # 通信サービス
-    "industrials": "#19D3F3",          # 資本財
-    "consumer_defensive": "#FF6692",   # 生活必需品
-    "energy": "#B6E880",               # エネルギー
-    "utilities": "#FF97FF",            # 公益
-    "realestate": "#FECB52",           # 不動産
-    "basic_materials": "#8C564B",      # 素材
+    "technology": "#D62828",           # 情報技術 ・赤
+    "financial_services": "#F77F00",   # 金融 ・橙
+    "healthcare": "#FCBF49",           # ヘルスケア ・黄
+    "consumer_cyclical": "#E85D04",    # 一般消費財 ・濃橙
+    "communication_services": "#DC2F02",  # 通信サービス ・赤橙
+    "industrials": "#F4A261",          # 資本財 ・サンドオレンジ
+    "consumer_defensive": "#FFBA08",   # 生活必需品 ・アンバー
+    "energy": "#9D0208",               # エネルギー ・濃赤
+    "utilities": "#BB9457",            # 公益 ・カーキ
+    "realestate": "#FFD6A5",           # 不動産 ・ライトピーチ
+    "basic_materials": "#6F4518",      # 素材 ・茶
 }
 
 # ---- チャートだけライト配色にする共通テンプレート ----
