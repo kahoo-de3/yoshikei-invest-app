@@ -83,18 +83,67 @@ SECTOR_COLORS = {
 
 # 組入上位銘柄（主要ティッカー）→ 業種キー。表の行を業種色で塗るのに使う。
 STOCK_SECTOR = {
+    # 情報技術
     "MSFT": "technology", "AAPL": "technology", "NVDA": "technology",
-    "AVGO": "technology", "CSCO": "technology",
-    "AMZN": "consumer_cyclical", "TSLA": "consumer_cyclical",
+    "AVGO": "technology", "CSCO": "technology", "AMD": "technology",
+    "MU": "technology", "INTC": "technology", "QCOM": "technology",
+    "TXN": "technology", "ORCL": "technology", "CRM": "technology",
+    "ADBE": "technology", "ACN": "technology", "IBM": "technology",
+    "NOW": "technology", "INTU": "technology", "AMAT": "technology",
+    "LRCX": "technology", "ADI": "technology", "KLAC": "technology",
+    "PLTR": "technology", "PANW": "technology", "ANET": "technology",
+    "CDNS": "technology", "SNPS": "technology", "MRVL": "technology",
+    "APH": "technology", "MSI": "technology",
+    # 通信サービス
     "META": "communication_services", "GOOGL": "communication_services",
     "GOOG": "communication_services", "VZ": "communication_services",
-    "BRK.B": "financial_services", "JPM": "financial_services",
-    "LLY": "healthcare", "PFE": "healthcare",
+    "NFLX": "communication_services", "CMCSA": "communication_services",
+    "DIS": "communication_services", "T": "communication_services",
+    "TMUS": "communication_services",
+    # 一般消費財
+    "AMZN": "consumer_cyclical", "TSLA": "consumer_cyclical",
+    "HD": "consumer_cyclical", "MCD": "consumer_cyclical",
+    "NKE": "consumer_cyclical", "SBUX": "consumer_cyclical",
+    "LOW": "consumer_cyclical", "BKNG": "consumer_cyclical",
+    "TJX": "consumer_cyclical", "ABNB": "consumer_cyclical",
+    # 生活必需品
     "COST": "consumer_defensive", "MO": "consumer_defensive",
     "PEP": "consumer_defensive", "KO": "consumer_defensive",
-    "EOG": "energy", "CVX": "energy",
-    "LMT": "industrials",
-    "PKG": "basic_materials",
+    "WMT": "consumer_defensive", "PG": "consumer_defensive",
+    "PM": "consumer_defensive", "MDLZ": "consumer_defensive",
+    "CL": "consumer_defensive",
+    # 金融
+    "BRK.B": "financial_services", "JPM": "financial_services",
+    "V": "financial_services", "MA": "financial_services",
+    "BAC": "financial_services", "WFC": "financial_services",
+    "GS": "financial_services", "MS": "financial_services",
+    "AXP": "financial_services", "BLK": "financial_services",
+    "SPGI": "financial_services", "C": "financial_services",
+    # ヘルスケア
+    "LLY": "healthcare", "PFE": "healthcare", "UNH": "healthcare",
+    "JNJ": "healthcare", "ABBV": "healthcare", "MRK": "healthcare",
+    "TMO": "healthcare", "ABT": "healthcare", "DHR": "healthcare",
+    "AMGN": "healthcare", "BMY": "healthcare", "GILD": "healthcare",
+    # 資本財
+    "LMT": "industrials", "CAT": "industrials", "BA": "industrials",
+    "HON": "industrials", "GE": "industrials", "RTX": "industrials",
+    "UPS": "industrials", "UNP": "industrials", "DE": "industrials",
+    "ETN": "industrials", "EMR": "industrials",
+    # エネルギー
+    "EOG": "energy", "CVX": "energy", "XOM": "energy", "COP": "energy",
+    "SLB": "energy", "PSX": "energy", "MPC": "energy", "OXY": "energy",
+    "WMB": "energy",
+    # 素材
+    "PKG": "basic_materials", "LIN": "basic_materials",
+    "SHW": "basic_materials", "APD": "basic_materials",
+    "FCX": "basic_materials", "NEM": "basic_materials",
+    "ECL": "basic_materials",
+    # 公益
+    "NEE": "utilities", "DUK": "utilities", "SO": "utilities",
+    "D": "utilities", "AEP": "utilities",
+    # 不動産
+    "PLD": "realestate", "AMT": "realestate", "EQIX": "realestate",
+    "O": "realestate", "SPG": "realestate",
 }
 
 
@@ -810,8 +859,12 @@ def render_fund_profile(name: str, ticker: str):
                 sym = str(row.get("シンボル", "")).strip().upper()
                 key = STOCK_SECTOR.get(sym)
                 color = SECTOR_COLORS.get(key) if key else None
-                bg = f"background-color: {_hex_to_rgba(color, 0.35)}" if color else ""
-                return [bg] * len(row)
+                if color:
+                    bg = _hex_to_rgba(color, 0.35)
+                else:
+                    # 業種未登録の銘柄は黒くならないよう薄い中立グレーにする
+                    bg = "rgba(120,120,120,0.18)"
+                return [f"background-color: {bg}; color: #1a1a1a"] * len(row)
 
             styled = tbl.style.apply(_row_sector_style, axis=1)
             st.dataframe(styled, use_container_width=True, hide_index=True, height=400)
