@@ -1065,7 +1065,7 @@ render_etf_panel(
     data_mod.DEFENSIVE_ETFS, "資産",
     "対S&P500 期間リターン差（ディフェンシブ）", "defensive_bar",
     baseline_day=sp_day_chg,
-    sort_col=PERIOD_COL, show_bar=False, heading_small=True, subtitle="《参考資料》",
+    sort_col="前日比 %", show_bar=False, heading_small=True, subtitle="《参考資料》",
     heading_size="1.8rem",
 )
 st.markdown(
