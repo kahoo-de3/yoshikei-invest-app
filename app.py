@@ -1000,10 +1000,22 @@ def render_etf_panel(
 
     # 表示用は内部列 _ticker を除く
     df_disp = df.drop(columns=["_ticker"])
+    _order = df["_ticker"].tolist()
+
+    def _styled_table(df_show):
+        """fmt整形＋（bar_colors指定時）行を業種色で塗ったStylerを返す。"""
+        sty = df_show.style.format(fmt)
+        if bar_colors:
+            def _row_c(row):
+                pos = df_show.index.get_indexer([row.name])[0]
+                c = bar_colors.get(_order[pos], "#cccccc")
+                return [f"background-color: {c}; color: {_text_on(c)}"] * len(row)
+            sty = sty.apply(_row_c, axis=1)
+        return sty
 
     if not show_bar:
         # グラフなし: テーブルのみ全幅表示
-        st.dataframe(df_disp.style.format(fmt), use_container_width=True, hide_index=True)
+        st.dataframe(_styled_table(df_disp), use_container_width=True, hide_index=True)
         return
 
     # bar_colors（ティッカー→色）が指定されていれば業種色、無ければ騰落の緑/赤
@@ -1030,7 +1042,7 @@ def render_etf_panel(
         bar_col, tbl_col = st.columns([3, 2])
     bar_col.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
     bar_col.caption(CHART_OP_HELP)
-    tbl_col.dataframe(df_disp.style.format(fmt), use_container_width=True, hide_index=True)
+    tbl_col.dataframe(_styled_table(df_disp), use_container_width=True, hide_index=True)
     if period_note:
         tbl_col.caption("※ 騰落期間（6mo/1y/3y/5y/10y）を変更するには左上の >> から期間を変更してください")
 
