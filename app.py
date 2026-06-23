@@ -147,6 +147,22 @@ STOCK_SECTOR = {
 }
 
 
+# セクターETFティッカー → 業種色（業種構成比率と同じ配色で統一）
+SECTOR_ETF_COLORS = {
+    "XLK": SECTOR_COLORS["technology"],
+    "XLF": SECTOR_COLORS["financial_services"],
+    "XLV": SECTOR_COLORS["healthcare"],
+    "XLY": SECTOR_COLORS["consumer_cyclical"],
+    "XLP": SECTOR_COLORS["consumer_defensive"],
+    "XLE": SECTOR_COLORS["energy"],
+    "XLI": SECTOR_COLORS["industrials"],
+    "XLU": SECTOR_COLORS["utilities"],
+    "XLB": SECTOR_COLORS["basic_materials"],
+    "XLRE": SECTOR_COLORS["realestate"],
+    "XLC": SECTOR_COLORS["communication_services"],
+}
+
+
 def _text_on(hexc: str) -> str:
     """背景色の明るさに応じて、読みやすい文字色(黒/白)を返す。"""
     h = hexc.lstrip("#")
@@ -927,6 +943,7 @@ def render_etf_panel(
     sort_col: str = "前日比 %", show_bar: bool = True, heading_small: bool = False,
     table_first: bool = False, subtitle: str | None = None,
     heading_size: str = "1.2rem", period_note: bool = False,
+    bar_colors: dict | None = None,
 ):
     """指定ETF群の前日比・期間騰落を棒グラフ＋テーブルで描画する。
 
@@ -963,6 +980,7 @@ def render_etf_panel(
         day_chg = (last_row[ticker] / prev_row[ticker] - 1) * 100
         period_chg = (last_row[ticker] / first_row[ticker] - 1) * 100
         row = {
+            "_ticker": ticker,
             label_col: f"{name_map.get(ticker, ticker)} ({ticker})",
             "前日比 %": day_chg,
             PERIOD_COL: period_chg,
@@ -980,15 +998,23 @@ def render_etf_panel(
     if baseline_period is not None:
         fmt[rel_p_col] = "{:+.2f}"
 
+    # 表示用は内部列 _ticker を除く
+    df_disp = df.drop(columns=["_ticker"])
+
     if not show_bar:
         # グラフなし: テーブルのみ全幅表示
-        st.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
+        st.dataframe(df_disp.style.format(fmt), use_container_width=True, hide_index=True)
         return
 
+    # bar_colors（ティッカー→色）が指定されていれば業種色、無ければ騰落の緑/赤
+    if bar_colors:
+        marker_color = [bar_colors.get(t, "#888888") for t in df["_ticker"]]
+    else:
+        marker_color = ["#2ca02c" if v >= 0 else "#d62728" for v in df[sort_col]]
     bar = go.Figure(
         go.Bar(
             x=df[sort_col], y=df[label_col], orientation="h",
-            marker_color=["#2ca02c" if v >= 0 else "#d62728" for v in df[sort_col]],
+            marker_color=marker_color,
         )
     )
     bar.update_layout(
@@ -1004,7 +1030,7 @@ def render_etf_panel(
         bar_col, tbl_col = st.columns([3, 2])
     bar_col.plotly_chart(bar, use_container_width=True, key=chart_key, theme=None, config=MOBILE_CONFIG)
     bar_col.caption(CHART_OP_HELP)
-    tbl_col.dataframe(df.style.format(fmt), use_container_width=True, hide_index=True)
+    tbl_col.dataframe(df_disp.style.format(fmt), use_container_width=True, hide_index=True)
     if period_note:
         tbl_col.caption("※ 騰落期間（6mo/1y/3y/5y/10y）を変更するには左上の >> から期間を変更してください")
 
@@ -1015,7 +1041,7 @@ render_etf_panel(
     data_mod.SECTOR_ETFS, "業種",
     "前日比リターン（業種別）", "sector_bar",
     heading_small=True, table_first=True, subtitle="《参考資料》",
-    heading_size="1.8rem", period_note=True,
+    heading_size="1.8rem", period_note=True, bar_colors=SECTOR_ETF_COLORS,
 )
 st.markdown("---")
 
