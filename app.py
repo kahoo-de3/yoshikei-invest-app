@@ -342,21 +342,21 @@ def inject_theme():
         </style>
 
         <div class="coin-layer">
-            <span style="top:7%;  left:3%;">🪙</span>
-            <span style="top:20%; left:90%;">🪙</span>
-            <span style="top:38%; left:12%;">🪙</span>
-            <span style="top:54%; left:84%;">🪙</span>
-            <span style="top:70%; left:28%;">🪙</span>
-            <span style="top:84%; left:64%;">🪙</span>
-            <span style="top:12%; left:52%;">🪙</span>
-            <span style="top:46%; left:44%;">🪙</span>
-            <span style="top:90%; left:8%;">🪙</span>
-            <span style="top:30%; left:70%;">🪙</span>
-            <span style="top:62%; left:4%;">🪙</span>
-            <span style="top:4%;  left:76%;">🪙</span>
-            <span style="top:77%; left:46%;">🪙</span>
-            <span style="top:26%; left:30%;">🪙</span>
-            <span style="top:58%; left:60%;">🪙</span>
+            <span style="top:7%;  left:3%;">💵</span>
+            <span style="top:20%; left:90%;">💵</span>
+            <span style="top:38%; left:12%;">💵</span>
+            <span style="top:54%; left:84%;">💵</span>
+            <span style="top:70%; left:28%;">💵</span>
+            <span style="top:84%; left:64%;">💵</span>
+            <span style="top:12%; left:52%;">💵</span>
+            <span style="top:46%; left:44%;">💵</span>
+            <span style="top:90%; left:8%;">💵</span>
+            <span style="top:30%; left:70%;">💵</span>
+            <span style="top:62%; left:4%;">💵</span>
+            <span style="top:4%;  left:76%;">💵</span>
+            <span style="top:77%; left:46%;">💵</span>
+            <span style="top:26%; left:30%;">💵</span>
+            <span style="top:58%; left:60%;">💵</span>
         </div>
         """,
         unsafe_allow_html=True,
