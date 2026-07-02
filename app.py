@@ -899,6 +899,11 @@ def render_fund_profile(name: str, ticker: str):
             st.dataframe(styled, use_container_width=True, hide_index=True, height=400)
             if prof.get("is_static"):
                 st.caption("※ 参考値（2026年6月時点の概算）。最新構成比は各ETF公式サイトでご確認ください。")
+            elif prof.get("extended"):
+                st.caption(
+                    f"※ 上位{len(tbl)}銘柄を表示。表の中をスクロール（スマホはスワイプ）すると"
+                    "続きが見られます。出典: stockanalysis.com"
+                )
             else:
                 st.caption("※ 無料データソース（Yahoo）の制約で上位約10銘柄まで表示。")
 

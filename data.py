@@ -390,19 +390,66 @@ def _static_fund_profile(ticker: str) -> dict:
     return {"holdings": holdings_df, "sectors": sd["sectors"], "is_static": True}
 
 
+def _fetch_holdings_extended(ticker: str, top_n: int = 20) -> pd.DataFrame | None:
+    """stockanalysis.com から組入上位銘柄を最大 top_n 件取得する。
+
+    Yahoo(yfinance)は上位約10件までのため、20件表示用の拡張ソース。
+    失敗時は None（呼び出し側で yfinance → 静的データにフォールバック）。
+    """
+    import io
+
+    import requests
+
+    try:
+        url = f"https://stockanalysis.com/etf/{ticker.lower()}/holdings/"
+        r = requests.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
+            },
+            timeout=20,
+        )
+        r.raise_for_status()
+        df = pd.read_html(io.StringIO(r.text))[0]
+        # 列: No. / Symbol / Name / % Weight / Shares
+        df = df[["Symbol", "Name", "% Weight"]].copy()
+        df["Holding Percent"] = (
+            pd.to_numeric(df["% Weight"].astype(str).str.rstrip("%"), errors="coerce") / 100
+        )
+        df = df.dropna(subset=["Symbol", "Holding Percent"])
+        df = df.set_index("Symbol")[["Name", "Holding Percent"]].head(top_n)
+        # 件数が少なすぎる場合はサイト構造変化の疑い → フォールバックさせる
+        if len(df) >= 5:
+            return df
+    except Exception:
+        pass
+    return None
+
+
 def fetch_fund_profile(ticker: str) -> dict:
     """ETF の組入上位銘柄とセクター構成比率を取得する。
 
-    戻り値: {"holdings": DataFrame|None, "sectors": dict|None, "is_static": bool}
+    戻り値: {"holdings": DataFrame|None, "sectors": dict|None,
+             "is_static": bool, "extended": bool}
     holdings は index=銘柄シンボル, 列=holdingName/holdingPercent。
-    API失敗時は静的フォールバックデータを返す（is_static=True）。
+    組入銘柄は stockanalysis.com（最大20件, extended=True）→
+    yfinance（上位約10件）→ 静的データ（is_static=True）の順で取得する。
     """
-    result: dict = {"holdings": None, "sectors": None, "is_static": False}
+    result: dict = {"holdings": None, "sectors": None, "is_static": False, "extended": False}
+
+    # 組入銘柄: 拡張ソース優先（最大20件）
+    ext = _fetch_holdings_extended(ticker, top_n=20)
+    if ext is not None:
+        result["holdings"] = ext
+        result["extended"] = True
+
     try:
         fd = yf.Ticker(ticker).funds_data
-        th = fd.top_holdings
-        if th is not None and not th.empty:
-            result["holdings"] = th
+        if result["holdings"] is None:
+            th = fd.top_holdings
+            if th is not None and not th.empty:
+                result["holdings"] = th
         sw = fd.sector_weightings
         if isinstance(sw, dict) and sw:
             result["sectors"] = sw
