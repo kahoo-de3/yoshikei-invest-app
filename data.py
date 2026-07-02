@@ -462,9 +462,15 @@ def fetch_fund_profile(ticker: str) -> dict:
     ):
         static = _static_fund_profile(ticker)
         result["holdings"] = static["holdings"]
-        if result["sectors"] is None:
-            result["sectors"] = static.get("sectors")
         result["is_static"] = True
+
+    # 業種構成は組入銘柄とは独立に補完する
+    # （拡張ソースで銘柄が取れても yfinance の業種取得が失敗するケースがあるため）
+    if result["sectors"] is None:
+        static = _static_fund_profile(ticker)
+        if static.get("sectors"):
+            result["sectors"] = static["sectors"]
+            result["sectors_static"] = True
     return result
 
 

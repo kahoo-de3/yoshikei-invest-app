@@ -939,6 +939,8 @@ def render_fund_profile(name: str, ticker: str):
             )
             st.caption(CHART_OP_HELP)
             st.plotly_chart(pie, use_container_width=True, key=f"pie_{ticker}", theme=None, config=MOBILE_CONFIG)
+            if prof.get("sectors_static"):
+                st.caption("※ 参考値（2026年6月時点の概算）。最新の業種構成は各ETF公式サイトでご確認ください。")
 
 
 ftab1, ftab2, ftab3, ftab4 = st.tabs(["① S&P500", "② NASDAQ100", "③ SCHD", "④ オルカン"])
