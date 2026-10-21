@@ -13,6 +13,9 @@
 """
 from __future__ import annotations
 
+import html
+import re
+
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -1123,17 +1126,29 @@ if not items:
     st.info("ニュースを取得できませんでした。時間をおいて更新してください。")
 else:
     def _esc(s: str) -> str:
+        # 見出し・翻訳・日時は外部(RSS/翻訳API)由来なので HTML として解釈させない。
+        # [ ] は Markdown のリンク/画像記法を壊されないように、
         # $ は Streamlit の数式記法($...$)に誤解釈されるためエスケープ
-        return (s or "").replace("$", "\\$")
+        s = html.escape(s or "")
+        return s.replace("[", "\\[").replace("]", "\\]").replace("$", "\\$")
+
+    def _safe_link(u: str) -> str:
+        # http(s) 以外（javascript: 等）はリンクにしない。Markdown のリンク構文を壊す空白・括弧はエンコード
+        u = (u or "").strip()
+        if not re.match(r"^https?://", u, re.IGNORECASE):
+            return ""
+        return u.replace(" ", "%20").replace("(", "%28").replace(")", "%29")
 
     for it in items:
         title = _esc(it["title"])
         # 英語見出しに日本語訳が取れていれば下に併記
         ja = _esc(it.get("title_ja"))
-        src = f"{it['source']} ｜ {it['published']}"
+        src = f"{_esc(it['source'])} ｜ {_esc(it['published'])}"
         sub = f"🇯🇵 {ja}<br>{src}" if ja else src
+        link = _safe_link(it["link"])
+        head = f"[{title}]({link})" if link else title
         st.markdown(
-            f"- [{title}]({it['link']})  \n  <small>{sub}</small>",
+            f"- {head}  \n  <small>{sub}</small>",
             unsafe_allow_html=True,
         )
 
